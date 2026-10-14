@@ -164,8 +164,8 @@
     <script>
         // Aapka Live Cloud API Link
         // Line 164 ko badal kar aisa kar dein:
-       // Line 167 ko mita kar yeh likhein:
-const API_BASE_URL = "/api";
+        // Line 167 ko mita kar yeh likhein:
+        const API_BASE_URL = "/api";
 
 
 
@@ -192,7 +192,7 @@ const API_BASE_URL = "/api";
 
         async function loadDataFromMongoDB() {
             try {
-                const response = await fetch(`${API_BASE_URL}/logs`);
+                const response = await fetch('/api/logs');
                 const mongoData = await response.json();
 
                 mongoData.forEach(item => {
@@ -245,7 +245,7 @@ const API_BASE_URL = "/api";
 
             calculateTopAnalytics();
             try {
-                await fetch(`${API_BASE_URL}/logs/update`, {
+await fetch('/api/logs/update', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ day, field, value })

@@ -103,7 +103,7 @@
 
         async function loadCustomers() {
             try {
-                const response = await fetch(`${API_BASE_URL}/customers`);
+const response = await fetch('/api/customers');
                 customersData = await response.json();
                 renderMatrix();
             } catch (err) {
