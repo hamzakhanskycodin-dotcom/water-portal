@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Water Supply (MongoDB Cloud)</title>
+    <link href="https://jsdelivr.net" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+        .admin-only {
+            display: none;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 6px;
+        }
+
+        .current-day-row {
+            background-color: #ffffcd !important;
+            font-weight: bold;
+        }
+
+        .table-input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-weight: 500;
+            padding: 4px;
+        }
+
+        .table-input:focus {
+            background: #e3f2fd;
+            border-radius: 4px;
+            outline: 2px solid #0d6efd;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <span class="navbar-brand fw-bold text-info">Main Control Panel (MongoDB Cloud Sync)</span>
+            <div>
+                <span class="text-white me-3">Welcome, <b id="userLabel"></b></span>
+                <button onclick="logout()" class="btn btn-danger btn-sm fw-bold">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-4">
+        <div class="d-flex justify-content-end mb-4">
+            <a href="./customer-sheet.html" class="btn btn-warning fw-bold py-2 px-4 shadow-sm text-dark">📊 Customer
+                30-Day Sheet</a>
+        </div>
+
+        <h4 class="fw-bold mb-3 text-secondary">Analytics & Progress Summary (Live Cloud Sync)</h4>
+
+        <!-- Row 1: Summary Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card bg-success text-white p-3 shadow-sm border-0">
+                    <h6>Total Counter Sales</h6>
+                    <h3 id="statsSales">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-primary text-white p-3 shadow-sm border-0">
+                    <h6>Total Supply (Grand Total)</h6>
+                    <h3 id="statWeeklyBottles">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-danger text-white p-3 shadow-sm border-0">
+                    <h6>Total Borrowed Bottles</h6>
+                    <h3 id="statBorrow">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2: Plants Specific Cards -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="card text-white p-3 shadow-sm border-0"
+                    style="background: linear-gradient(135deg, #1d2b64, #7382be);">
+                    <h6>Hamza Supplier Total</h6>
+                    <h3 id="cardHamzaSupplier">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white p-3 shadow-sm border-0" style="background-color: #4facfe;">
+                    <h6>Arsalan Bhai Total</h6>
+                    <h3 id="cardArsalanBhai">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white p-3 shadow-sm border-0" style="background-color: #ff4b5c;">
+                    <h6>Makkah Plant Total</h6>
+                    <h3 id="cardMakkahPlant">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white p-3 shadow-sm border-0" style="background-color: #ffb400;">
+                    <h6>Jutt Plant Total</h6>
+                    <h3 id="cardJuttPlant">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 3: Expense Cards -->
+        <div class="row g-3 mb-5">
+            <div class="col-md-4">
+                <div class="card bg-secondary text-white p-3 shadow-sm border-0">
+                    <h6>Fuel Exp. Total</h6>
+                    <h3 id="cardFuelExpense">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white p-3 shadow-sm border-0">
+                    <h6>Other Exp. Total</h6>
+                    <h3 id="cardOtherPayments">Rs. 0</h3>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart (Auto-Saves to Cloud)</h4>
+        <div class="card p-3 shadow-sm border-0 mb-5">
+            <div class="table-responsive" style="max-height: 650px; overflow-y: auto;">
+                <table class="table table-bordered table-hover matrix-table bg-white m-0">
+                    <thead class="table-dark" style="position: sticky; top:0; z-index: 10;">
+                        <tr>
+                            <th style="width: 100px;">DATE</th>
+                            <th class="text-success">COUNTER SALE</th>
+                            <th>HAMZA SUPPLIER</th>
+                            <th>ARSALAN BHAI</th>
+                            <th>MAKKAH PLANT</th>
+                            <th>JUTT PLANT</th>
+                            <th class="text-primary">TOTAL SUPPLY</th>
+                            <th class="text-danger">BORROW BOTTLES</th>
+                            <th>FUEL EXP.</th>
+                            <th>OTHER EXP.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="ayanNotice" class="card p-5 text-center shadow-sm border-0 my-5 bg-white d-none">
+            <h3 class="text-success fw-bold">Login Successful!</h3>
+            <p class="text-muted fs-5 mt-2">Aap portal par ba-hifazat login ho chuke hain.</p>
+        </div>
+    </div>
+
+    <script>
+        // Aapka Live Cloud API Link
+        const API_BASE_URL = "https://vercel.app";
+
+        const activeUser = localStorage.getItem('loggedInUser') || "Authorized User";
+        document.getElementById('userLabel').innerText = activeUser;
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
+
+        if (activeUser === "AYAN") {
+            document.getElementById('ayanNotice').classList.remove('d-none');
+        }
+
+        const tbody = document.getElementById('matrixTableBody');
+        const currentDayNum = new Date().getDate();
+        let clientDataArray = {};
+
+        // Empty structure initialize karein
+        for (let d = 1; d <= 31; d++) {
+            clientDataArray[d] = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
+        }
+
+        async function loadDataFromMongoDB() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/logs`);
+                const mongoData = await response.json();
+
+                mongoData.forEach(item => {
+                    if (clientDataArray[item.day]) {
+                        clientDataArray[item.day] = item;
+                    }
+                });
+                renderTableStructure();
+            } catch (err) {
+                console.error("Cloud load failed, using local grid layout:", err);
+                renderTableStructure();
+            }
+        }
+
+        function renderTableStructure() {
+            let tableRowsHtml = '';
+
+            for (let day = 1; day <= 31; day++) {
+                const rowClass = (day === currentDayNum) ? 'class="current-day-row"' : '';
+                const dData = clientDataArray[day];
+
+                tableRowsHtml += `<tr ${rowClass}>
+                    <td><b>Day ${day}</b></td>
+                    <td><input type="number" class="table-input text-success fw-bold" value="${dData.counterSale || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'counterSale', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.hamzaSupplier || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'hamzaSupplier', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
+                    <td id="row-total-supply-${day}" class="text-primary fw-bold">${dData.totalSupply || 0}</td>
+                    <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
+                    <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
+                    <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
+                </tr>`;
+            }
+            tbody.innerHTML = tableRowsHtml;
+            calculateTopAnalytics();
+        }
+
+        async function sendUpdateToBackend(day, field, value) {
+            clientDataArray[day][field] = Number(value) || 0;
+
+            let dynamicTotal = (Number(clientDataArray[day].hamzaSupplier) || 0) +
+                (Number(clientDataArray[day].arsalanBhai) || 0) +
+                (Number(clientDataArray[day].makkahPlant) || 0) +
+                (Number(clientDataArray[day].juttPlant) || 0);
+
+            clientDataArray[day].totalSupply = dynamicTotal;
+
+            document.getElementById(`row-total-supply-${day}`).innerText = dynamicTotal;
+
+            calculateTopAnalytics();
+            try {
+                await fetch(`${API_BASE_URL}/logs/update`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ day, field, value })
+                });
+            } catch (err) {
+                console.error("Cloud syncing failed:", err);
+            }
+        }
+        function calculateTopAnalytics() {
+            let sums = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
+            for (let day = 1; day <= 31; day++) {
+                sums.counterSale += (clientDataArray[day].counterSale || 0);
+                sums.hamzaSupplier += (clientDataArray[day].hamzaSupplier || 0);
+                sums.arsalanBhai += (clientDataArray[day].arsalanBhai || 0);
+                sums.makkahPlant += (clientDataArray[day].makkahPlant || 0);
+                sums.juttPlant += (clientDataArray[day].juttPlant || 0);
+                sums.totalSupply += (clientDataArray[day].totalSupply || 0);
+                sums.borrowBottles += (clientDataArray[day].borrowBottles || 0);
+                sums.fuelExpense += (clientDataArray[day].fuelExpense || 0);
+                sums.otherPayments += (clientDataArray[day].otherPayments || 0);
+            }
+            document.getElementById('statsSales').innerText = "Rs. " + sums.counterSale.toLocaleString();
+            document.getElementById('statWeeklyBottles').innerText = sums.totalSupply.toLocaleString();
+            document.getElementById('statBorrow').innerText = sums.borrowBottles.toLocaleString();
+            document.getElementById('cardHamzaSupplier').innerText = sums.hamzaSupplier.toLocaleString();
+            document.getElementById('cardArsalanBhai').innerText = sums.arsalanBhai.toLocaleString();
+            document.getElementById('cardMakkahPlant').innerText = sums.makkahPlant.toLocaleString();
+            document.getElementById('cardJuttPlant').innerText = sums.juttPlant.toLocaleString();
+            document.getElementById('cardFuelExpense').innerText = "Rs. " + sums.fuelExpense.toLocaleString();
+            document.getElementById('cardOtherPayments').innerText = "Rs. " + sums.otherPayments.toLocaleString();
+        }
+        loadDataFromMongoDB();

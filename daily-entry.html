@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Water Supply</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+</head>
+
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <div class="container">
+            <span class="navbar-brand fw-bold text-info">Main Control Panel</span>
+            <div>
+                <span class="text-white me-3">Welcome, <b id="userLabel"></b></span>
+                <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container py-4">
+        <!-- Navigation Buttons -->
+        <div class="d-flex justify-content-between mb-4">
+            <a href="daily-entry.html" class="btn btn-primary fw-bold py-2 px-4">+ Nayi Entry Karein (Ayan)</a>
+            <a href="customer-sheet.html" class="btn btn-warning fw-bold py-2 px-4">👥 Customer 30-Day Sheet</a>
+        </div>
+
+        <!-- Weekly & Monthly Progress Cards -->
+        <h4 class="fw-bold mb-3 text-secondary">Analytics & Progress Summary</h4>
+        <div class="row g-3 mb-5">
+            <div class="col-md-3">
+                <div class="card bg-success text-white p-3 shadow-sm border-0">
+                    <h6>Total Counter Sales (This Month)</h6>
+                    <h3 id="statSales">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-danger text-white p-3 shadow-sm border-0">
+                    <h6>Total Expenses (This Month)</h6>
+                    <h3 id="statExpenses">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-primary text-white p-3 shadow-sm border-0">
+                    <h6>Bottles Supplied (This Week)</h6>
+                    <h3 id="statWeeklyBottles">0</h3>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark p-3 shadow-sm border-0">
+                    <h6>Total Borrowed Bottles</h6>
+                    <h3 id="statBorrow">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Table -->
+        <h4 class="fw-bold mb-3">Rozana Ki Entries Ka Record</h4>
+        <div class="card p-3 shadow-sm border-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Date</th>
+                            <th>Counter Sale</th>
+                            <th>Labour Pay</th>
+                            <th>Total Supply</th>
+                            <th>Borrow Bottles</th>
+                            <th>Fuel Exp.</th>
+                            <th>Other Exp.</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTableBody">
+                        <tr>
+                            <td colspan="7" class="text-center text-muted">Abhi tak koi data entry nahi ki gayi.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+ <!-- 1. Firebase App Core Framework (Yeh zaroori hai) -->
+<script src="https://gstatic.com"></script>
+
+<!-- 2. Firebase Firestore Database (Database connect karne ke liye) -->
+<script src="https://gstatic.com"></script>
+
+
+    <script>
+        // 1. Aap ka Real Firebase Configuration Data
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9FFDwNAnpt7rPUBtPxC37ufW0so55rrE",
+            authDomain: "://firebaseapp.com",
+            projectId: "water-supply-portal",
+            storageBucket: "water-supply-portal.firebasestorage.app",
+            messagingSenderId: "857218741697",
+            appId: "1:857218741697:web:66810837ffb22499372b40",
+            measurementId: "G-T8JQPR943V"
+        };
+
+        // Firebase ko initialize karein
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 2. User Authentication Check
+        const activeUser = localStorage.getItem('loggedInUser');
+        if (!activeUser) {
+            window.location.href = 'index.html';
+        } else {
+            document.getElementById('userLabel').innerText = activeUser;
+        }
+
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
+
+        // 3. Firebase se Daily Entries load aur calculate karna
+        function loadDailyEntries() {
+            db.collection("dailyEntries").orderBy("date", "desc").get().then((querySnapshot) => {
+                let tableHtml = '';
+                let totalSales = 0;
+                let totalExpenses = 0;
+                let totalWeeklyBottles = 0;
+                let totalBorrow = 0;
+                let counter = 0;
+
+                if (querySnapshot.empty) {
+                    document.getElementById('historyTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-muted">Abhi tak koi data entry nahi ki gayi.</td></tr>`;
+                    updateCards(0, 0, 0, 0);
+                    return;
+                }
+
+                querySnapshot.forEach((doc) => {
+                    const e = doc.data();
+                    counter++;
+
+                    // Purana bug fix: Number() use kar ke sahi calculation karna
+                    const counterSale = Number(e.counterSale || 0);
+                    const labourPay = Number(e.labourPay || 0);
+                    const fuelExpense = Number(e.fuelExpense || 0);
+                    const otherPayments = Number(e.otherPayments || 0);
+                    const totalSupply = Number(e.totalSupply || 0);
+                    const borrowBottles = Number(e.borrowBottles || 0);
+
+                    const currentExpenses = labourPay + fuelExpense + otherPayments;
+
+                    // Table ki row tayyar karna
+                    tableHtml += `
+                  <tr>
+                      <td><b>${e.date}</b></td>
+                      <td class="text-success fw-bold">Rs. ${counterSale}</td>
+                      <td>Rs. ${labourPay}</td>
+                      <td class="fw-bold">${totalSupply}</td>
+                      <td class="text-danger">${borrowBottles}</td>
+                      <td>Rs. ${fuelExpense}</td>
+                      <td>Rs. ${otherPayments}</td>
+                  </tr>
+              `;
+
+                    // Totals jama karna (Analytics ke liye)
+                    totalSales += counterSale;
+                    totalExpenses += currentExpenses;
+                    totalBorrow += borrowBottles;
+
+                    // Pehli 7 entries ka approximation weekly bottles ke liye
+                    if (counter <= 7) {
+                        totalWeeklyBottles += totalSupply;
+                    }
+                });
+
+                // DOM Updates
+                document.getElementById('historyTableBody').innerHTML = tableHtml;
+                updateCards(totalSales, totalExpenses, totalWeeklyBottles, totalBorrow);
+
+            }).catch((error) => {
+                console.error("Data load karne mein masla: ", error);
+            });
+        }
+
+        // Cards ko screen par update karne ka function
+        function updateCards(sales, expenses, supply, borrow) {
+            if (document.getElementById('statSales')) document.getElementById('statSales').innerText = 'Rs. ' + sales;
+            if (document.getElementById('statExpenses')) document.getElementById('statExpenses').innerText = 'Rs. ' + expenses;
+            if (document.getElementById('statWeeklyBottles')) document.getElementById('statWeeklyBottles').innerText = supply;
+            if (document.getElementById('statBorrow')) document.getElementById('statBorrow').innerText = borrow;
+        }
+
+        // Page khulne par data load karein
+        loadDailyEntries();
+
+        // Jab user naya form submit kare to data seedha Firebase bhejein
+        function saveNewEntry(event) {
+            event.preventDefault(); // Page refresh hone se bachayein
+
+            // Form inputs se data lena
+            const dateVal = document.getElementById('entryDate').value;
+            const salesVal = document.getElementById('counterSale').value;
+            const labourVal = document.getElementById('labourPay').value;
+            const supplyVal = document.getElementById('totalSupply').value;
+            const borrowVal = document.getElementById('borrowBottles').value;
+            const fuelVal = document.getElementById('fuelExpense').value;
+            const otherVal = document.getElementById('otherPayments').value;
+
+            if (!dateVal) {
+                alert("Meharbani kar ke pehle Date select karein!");
+                return;
+            }
+
+            const newEntry = {
+                date: dateVal,
+                counterSale: Number(salesVal) || 0,
+                labourPay: Number(labourVal) || 0,
+                totalSupply: Number(supplyVal) || 0,
+                borrowBottles: Number(borrowVal) || 0,
+                fuelExpense: Number(fuelVal) || 0,
+                otherPayments: Number(otherVal) || 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Cloud Firestore mein entry add karna
+            db.collection("dailyEntries").add(newEntry).then(() => {
+                alert("Entry kamyabi se Cloud par save ho gayi hai!");
+                document.getElementById('loginForm').reset();
+                loadDailyEntries(); // Table dobara refresh karein
+            }).catch((error) => {
+                alert("Data save nahi ho saka: " + error);
+            });
+        }
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>
