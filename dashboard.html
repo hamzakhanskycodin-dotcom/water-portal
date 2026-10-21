@@ -7,109 +7,28 @@
     <title>Dashboard - Water Supply (MongoDB Cloud)</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <style>
-        .admin-only {
-            display: none;
-        }
-
-        .matrix-table th,
-        .matrix-table td {
-            text-align: center;
-            vertical-align: middle;
-            padding: 6px;
-        }
-
-        .current-day-row {
-            background-color: #ffffcd !important;
-            font-weight: bold;
-        }
-
-        .table-input {
-            width: 100%;
-            border: none;
-            background: transparent;
-            text-align: center;
-            font-weight: 500;
-            padding: 4px;
-        }
-
-        .table-input:focus {
-            background: #e3f2fd;
-            border-radius: 4px;
-            outline: 2px solid #0d6efd;
-        }
-
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        @media (max-width: 576px) {
-
-            /* Mobile par navbar ki extra horizontal borders aur stretch ko control karne ke liye */
-            .navbar {
-                padding: 8px 4px !important;
-            }
-
-            .navbar-brand {
-                font-size: 13px !important;
-                /* Text chota taake mobile screen se bahar na jaye */
-                white-space: normal !important;
-                /* Agar text bada ho toh automatic line change kare */
-                text-align: left;
-            }
-
-            .navbar .container {
-                max-width: 100% !important;
-                padding-left: 4px !important;
-                padding-right: 4px !important;
-            }
-
-
-            /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
-            .card {
-                padding: 10px 6px !important;
-                margin-bottom: 0px !important;
-
-                /* YEH 2 LINES ZAROOR ADD KAREIN: */
-                min-height: 85px !important;
-                /* Saare cards ko zabardasti ek jitni height milegi */
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: space-between !important;
-                /* Text aur Number barabar spread honge */
-            }
-
-            /* Iske sath hi h6 ka font thoda aur compressed karein taake wrap kam ho */
-            .card h6 {
-                font-size: 11px !important;
-                line-height: 1.2 !important;
-                margin-bottom: 2px !important;
-            }
-
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+    <nav class="navbar navbar-expand-lg  shadow-sm">
         <div class="container">
-            <span class="navbar-brand fw-bold text-info">Main Control Panel (MongoDB Cloud Sync)</span>
+            <span class="navbar-brand fw-bold ">Main Control Panel</span>
             <div>
-                <span class="text-white me-3">Welcome, <b id="userLabel"></b></span>
-                <button onclick="logout()" class="btn btn-danger btn-sm fw-bold">Logout</button>
+                <span class="welcome text-white me-5">Welcome, <b id="userLabel"></b></span>
             </div>
+            <button onclick="logout()" class="btn btn-dange btn-sm fw-bold">Logout</button>
         </div>
     </nav>
 
-    <div class="container py-4">
+
+    <div class="container py-4  ">
         <div class="d-flex justify-content-end mb-4">
-            <a href="./customer-sheet.html" class="btn btn-warning fw-bold py-2 px-4 shadow-sm text-dark">📊 Customer
+            <a href="./customer-sheet.html" class="btn-2 fw-bold py-2 px-4 shadow-sm ">📊 Customer
                 30-Day Sheet</a>
         </div>
 
-        <h4 class="fw-bold mb-3 text-secondary">Analytics & Progress Summary (Live Cloud Sync)</h4>
+        <h4 class="fw-bold mb-3 heading-2" >Analytics & Progress Summary</h4>
 
         <!-- Row 1: Summary Cards -->
         <div class="row g-3 mb-4">

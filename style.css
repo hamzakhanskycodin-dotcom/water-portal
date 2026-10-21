@@ -1,0 +1,168 @@
+ .admin-only {
+     display: none;
+ }
+
+ .matrix-table th,
+ .matrix-table td {
+     text-align: center;
+     vertical-align: middle;
+     padding: 6px;
+ }
+
+ .current-day-row {
+     background-color: #ffffcd !important;
+     font-weight: bold;
+ }
+
+ .table-input {
+     width: 100%;
+     border: none;
+     background: transparent;
+     text-align: center;
+     font-weight: 500;
+     padding: 4px;
+ }
+
+ .table-input:focus {
+     background: #e3f2fd;
+     border-radius: 4px;
+     outline: 2px solid #0d6efd;
+ }
+
+ input::-webkit-outer-spin-button,
+ input::-webkit-inner-spin-button {
+     -webkit-appearance: none;
+     margin: 0;
+ }
+
+ .navbar {
+     height: 75px;
+     background-color: #2c68a5;
+     color: white;
+ }
+
+ .navbar-brand {
+
+     font-size: 30px;
+     color: white;
+     font-weight: bold;
+ }
+
+ .welcome {
+     font-size: 30px;
+     color: white;
+     font-weight: bold;
+ }
+
+ .btn-dange {
+     padding: 5px 50px;
+     background-color: #ffffff;
+     border-color: #ffffff;
+     font-weight: bold;
+ }
+
+ .heading-2 {
+     color: #2c68a5;
+     font-size: 25px;
+
+ }
+
+ .btn-2 {
+
+     background-color: #2c68a5;
+     border-color: #2c68a5;
+     color: white;
+     text-decoration: none;
+     border-radius: 5px;
+ }
+
+ @media (max-width: 576px) {
+
+     /* Mobile par navbar ki extra horizontal borders aur stretch ko control karne ke liye */
+     .navbar {
+         padding: 8px 4px !important;
+     }
+
+     .navbar-brand {
+         font-size: 13px !important;
+         /* Text chota taake mobile screen se bahar na jaye */
+         white-space: normal !important;
+         /* Agar text bada ho toh automatic line change kare */
+         text-align: left;
+     }
+
+     .navbar .container {
+         max-width: 100% !important;
+         padding-left: 4px !important;
+         padding-right: 4px !important;
+     }
+
+
+     /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
+     .card {
+         padding: 10px 6px !important;
+         margin-bottom: 0px !important;
+
+         /* YEH 2 LINES ZAROOR ADD KAREIN: */
+         min-height: 85px !important;
+         /* Saare cards ko zabardasti ek jitni height milegi */
+         display: flex !important;
+         flex-direction: column !important;
+         justify-content: space-between !important;
+         /* Text aur Number barabar spread honge */
+     }
+
+     /* Iske sath hi h6 ka font thoda aur compressed karein taake wrap kam ho */
+     .card h6 {
+         font-size: 11px !important;
+         line-height: 1.2 !important;
+         margin-bottom: 2px !important;
+     }
+
+ }
+
+
+ .matrix-input {
+     width: 55px;
+     text-align: center;
+     border: 1px solid #ced4da;
+     border-radius: 4px;
+ }
+
+ .matrix-table th,
+ .matrix-table td {
+     padding: 6px;
+     text-align: center;
+     vertical-align: middle;
+ }
+
+ .day-col {
+     min-width: 65px;
+     width: 65px;
+ }
+
+ .total-column-bg {
+     background-color: #212529 !important;
+     color: #ffffff !important;
+     font-weight: bold;
+     width: 110px;
+     min-width: 110px;
+ }
+
+ input::-webkit-outer-spin-button,
+ input::-webkit-inner-spin-button {
+     -webkit-appearance: none;
+     margin: 0;
+ }
+
+ .sticky-footer {
+     position: sticky;
+     bottom: 0;
+     background-color: #f8f9fa;
+     font-weight: bold;
+     box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+ }
+
+ .card{
+    background-color: #2c68a5 !important;
+ }
