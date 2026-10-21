@@ -32,6 +32,31 @@
                 /* Aapka dark header color matching ke liye */
                 color: white;
             }
+
+            #matrixFooter {
+                position: sticky;
+                bottom: 0;
+                z-index: 20;
+                /* Taake yeh scroll hone wale text ke upar rahe */
+                box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+                /* Optional: halki si upper line line decoration ke liye */
+            }
+
+            /* 2. Daily Total row ke andar background color lazmi lagana hai taake text piche na chupe */
+            #matrixFooter tr {
+                background-color: #f8f9fa !important;
+                /* Aapka table-secondary ya bg-light matching color */
+            }
+
+            /* 3. Daily Total ke pehle column (jo text hai) ko bhi left side par freeze rakhne ke liye */
+            #matrixFooter td:first-child {
+                position: sticky;
+                left: 0;
+                min-width: 120px !important;
+                max-width: 120px !important;
+                background-color: #f8f9fa !important;
+                z-index: 21;
+            }
         }
     </style>
 
@@ -94,7 +119,7 @@
 
         async function loadCustomers() {
             try {
-              
+
                 const response = await fetch(`${API_BASE_URL}/customers`);
 
                 // Agar server error de (like 500), to catch block me bhej dein
