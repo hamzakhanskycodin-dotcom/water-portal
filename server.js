@@ -6,8 +6,8 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// MongoDB Cloud Connection
-const mongoURI = "mongodb+srv://hamzakhanskycodin_db_user:hamza12345@cluster0.qdf49ev.mongodb.net/?appName=Cluster0&compressors=zlib";
+// Line 10 par is naye user (hamza:water12345) wala link paste karein:
+const mongoURI = "mongodb+srv://hamza:water12345@cluster0.qdf49ev.mongodb.net/?appName=Cluster0&compressors=zlib";
 
 mongoose.connect(mongoURI)
     .then(() => console.log("MongoDB Connected Successfully!"))
@@ -46,17 +46,29 @@ app.get('/api/logs', async (req, res) => {
     } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// Apne app.post('/api/logs/update') ke andar is tarah complete update logic likhein:
 app.post('/api/logs/update', async (req, res) => {
-    const { day, field, value } = req.body;
     try {
-        let log = await Log.findOne({ day });
-        if (!log) log = new Log({ day });
-        log[field] = Number(value) || 0;
-        log.totalSupply = (log.hamzaSupplier || 0) + (log.arsalanBhai || 0) + (log.makkahPlant || 0) + (log.juttPlant || 0);
-        await log.save();
-        res.json({ success: true, updatedLog: log });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        const { day, field, value } = req.body;
+
+        // Dynamic query taake koi bhi field (samet totalSupply) force update ho jaye
+        const updateData = {};
+        updateData[field] = Number(value) || 0;
+
+        // upsert: true se agar field ya document nahi bana hoga toh khud ban jayega
+        const updatedLog = await Log.findOneAndUpdate(
+            { day: Number(day) },
+            { $set: updateData },
+            { new: true, upsert: true }
+        );
+
+        res.status(200).json({ success: true, data: updatedLog });
+    } catch (err) {
+        console.error("Database update failed:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
+
 
 // Customer Sheet Routes (Naye Added Routes)
 app.get('/api/customers', async (req, res) => {

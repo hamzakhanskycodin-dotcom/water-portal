@@ -162,10 +162,11 @@
         </div>
     </div>
     <script>
-        // Aapka Live Cloud API Link
-        // Line 164 ko badal kar aisa kar dein:
-        // Line 167 ko mita kar yeh likhein:
+ 
         const API_BASE_URL = "/api";
+
+
+
 
 
 
@@ -192,7 +193,7 @@
 
         async function loadDataFromMongoDB() {
             try {
-const response = await fetch('/api/logs');
+                const response = await fetch(`${API_BASE_URL}/logs`);
                 const mongoData = await response.json();
 
                 mongoData.forEach(item => {
@@ -221,7 +222,7 @@ const response = await fetch('/api/logs');
                     <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
                     <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
                     <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
-                    <td id="row-total-supply-${day}" class="text-primary fw-bold">${dData.totalSupply || 0}</td>
+                    <td> <input type="number"id="row-total-supply-${day}" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}"placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
                     <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
                     <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
                     <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
@@ -232,26 +233,28 @@ const response = await fetch('/api/logs');
         }
 
         async function sendUpdateToBackend(day, field, value) {
+            // Pehle local array update karein aur display chalayein (Taake card 0 na ho)
+            if (!clientDataArray[day]) {
+                clientDataArray[day] = {};
+            }
             clientDataArray[day][field] = Number(value) || 0;
 
-            let dynamicTotal = (Number(clientDataArray[day].hamzaSupplier) || 0) +
-                (Number(clientDataArray[day].arsalanBhai) || 0) +
-                (Number(clientDataArray[day].makkahPlant) || 0) +
-                (Number(clientDataArray[day].juttPlant) || 0);
-
-            clientDataArray[day].totalSupply = dynamicTotal;
-
-            document.getElementById(`row-total-supply-${day}`).innerText = dynamicTotal;
-
+            // Live update card bina server dependence ke
             calculateTopAnalytics();
+
             try {
-await fetch('/api/logs/update', {
+                const response = await fetch(`${API_BASE_URL}/logs/update`, {
+
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ day, field, value })
                 });
+
+                if (!response.ok) {
+                    console.warn("Server responded with an error, but local state is updated.");
+                }
             } catch (err) {
-                console.error("Cloud syncing failed:", err);
+                console.error("Cloud syncing failed, but local data works:", err);
             }
         }
         function calculateTopAnalytics() {
@@ -262,10 +265,12 @@ await fetch('/api/logs/update', {
                 sums.arsalanBhai += (clientDataArray[day].arsalanBhai || 0);
                 sums.makkahPlant += (clientDataArray[day].makkahPlant || 0);
                 sums.juttPlant += (clientDataArray[day].juttPlant || 0);
-                sums.totalSupply += (clientDataArray[day].totalSupply || 0);
                 sums.borrowBottles += (clientDataArray[day].borrowBottles || 0);
                 sums.fuelExpense += (clientDataArray[day].fuelExpense || 0);
                 sums.otherPayments += (clientDataArray[day].otherPayments || 0);
+
+                let dayTotal = clientDataArray[day].totalSupply || clientDataArray[day].total_supply || 0;
+                sums.totalSupply += (+dayTotal || 0);
             }
             document.getElementById('statsSales').innerText = "Rs. " + sums.counterSale.toLocaleString();
             document.getElementById('statWeeklyBottles').innerText = sums.totalSupply.toLocaleString();

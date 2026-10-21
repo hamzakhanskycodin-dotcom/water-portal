@@ -84,8 +84,7 @@
  <!-- 1. Firebase App Core Framework (Yeh zaroori hai) -->
 <script src="https://gstatic.com"></script>
 
-<!-- 2. Firebase Firestore Database (Database connect karne ke liye) -->
-<script src="https://gstatic.com"></script>
+
 
 
     <script>
@@ -165,10 +164,7 @@
                     totalExpenses += currentExpenses;
                     totalBorrow += borrowBottles;
 
-                    // Pehli 7 entries ka approximation weekly bottles ke liye
-                    if (counter <= 7) {
-                        totalWeeklyBottles += totalSupply;
-                    }
+                   
                 });
 
                 // DOM Updates
