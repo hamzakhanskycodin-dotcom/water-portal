@@ -78,9 +78,10 @@
 
  @media (max-width: 576px) {
 
-     /* Mobile par navbar ki extra horizontal borders aur stretch ko control karne ke liye */
      .navbar {
          padding: 8px 4px !important;
+         height: auto !important;
+         /* Fixed height khatam kar ke automatic fit karne ke liye */
      }
 
      .navbar-brand {
@@ -91,12 +92,24 @@
          text-align: left;
      }
 
-     .navbar .container {
+     .navbar .container,
+     .navbar .container-fluid {
+         display: flex !important;
+         justify-content: space-between !important;
+         align-items: center !important;
+         flex-wrap: nowrap !important;
+         /* Mobile par text aur logout ek hi line mein rahen */
          max-width: 100% !important;
          padding-left: 4px !important;
          padding-right: 4px !important;
      }
 
+     .row {
+         display: flex !important;
+         flex-wrap: wrap !important;
+         margin-left: -4px !important;
+         margin-right: -4px !important;
+     }
 
      /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
      .card {
@@ -125,10 +138,11 @@
          flex-wrap: wrap !important;
      }
 
-     /* 375px screen par cards columns ko 50% split karne ke liye force layout */
      .col-6 {
          flex: 0 0 50% !important;
          max-width: 50% !important;
+         padding-left: 4px !important;
+         padding-right: 4px !important;
      }
 
      /* Total Supply (Grand Total) wale div/column par col-12 class ko 100% full-width rakhne ke liye */
