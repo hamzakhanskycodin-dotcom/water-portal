@@ -47,6 +47,26 @@
 
         @media (max-width: 576px) {
 
+            /* Mobile par navbar ki extra horizontal borders aur stretch ko control karne ke liye */
+            .navbar {
+                padding: 8px 4px !important;
+            }
+
+            .navbar-brand {
+                font-size: 13px !important;
+                /* Text chota taake mobile screen se bahar na jaye */
+                white-space: normal !important;
+                /* Agar text bada ho toh automatic line change kare */
+                text-align: left;
+            }
+
+            .navbar .container {
+                max-width: 100% !important;
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+            }
+
+
             /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
             .card {
                 padding: 10px 6px !important;
