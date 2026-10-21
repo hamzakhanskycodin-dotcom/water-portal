@@ -94,16 +94,29 @@
 
         async function loadCustomers() {
             try {
-                // Line 97 ko is tarah update karein:
                 const response = await fetch(`${API_BASE_URL}/customers`);
 
+                // Agar server error de (like 500), to catch block me bhej dein
+                if (!response.ok) throw new Error('Server returned an error');
 
-                customersData = await response.json();
-                renderMatrix();
+                const data = await response.json();
+
+                // Ensure karein ke jo data aaya hai wo sach me ek Array hi hai
+                if (Array.isArray(data)) {
+                    customersData = data;
+                    renderMatrix();
+                } else {
+                    console.error("Data array nahi hai:", data);
+                    customersData = []; // Khali array set krdein taake crash na ho
+                    renderMatrix();
+                }
             } catch (err) {
                 console.error("Error fetching customers from database:", err);
+                customersData = []; // Fallback empty array
+                renderMatrix();
             }
         }
+
 
         function renderMatrix() {
             const tbody = document.getElementById('customerTableBody');
