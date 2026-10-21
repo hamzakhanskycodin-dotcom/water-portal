@@ -150,12 +150,17 @@
          flex: 0 0 100% !important;
          max-width: 100% !important;
      }
+
      .welcome {
          font-size: 13px !important;
          /* Mobile par welcome text chota ho jaye */
      }
 
-
+     .btn-denge {
+         padding: 2px 3px;
+         background-color: white;
+         font-size: 13px;
+     }
  }
 
 
