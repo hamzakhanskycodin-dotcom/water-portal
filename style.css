@@ -119,6 +119,25 @@
          margin-bottom: 2px !important;
      }
 
+     /* Is code ko style.css ke @media block ke andar sabse upar add karein: */
+     .row.g-3 {
+         display: flex !important;
+         flex-wrap: wrap !important;
+     }
+
+     /* 375px screen par cards columns ko 50% split karne ke liye force layout */
+     .col-6 {
+         flex: 0 0 50% !important;
+         max-width: 50% !important;
+     }
+
+     /* Total Supply (Grand Total) wale div/column par col-12 class ko 100% full-width rakhne ke liye */
+     .col-md-12 {
+         flex: 0 0 100% !important;
+         max-width: 100% !important;
+     }
+
+
  }
 
 
@@ -162,5 +181,3 @@
      font-weight: bold;
      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
  }
-
- 
