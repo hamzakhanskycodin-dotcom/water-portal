@@ -157,7 +157,7 @@
      }
 
      .btn-denge {
-         padding: 2px 3px;
+         padding: 2px 0px !important;
          background-color: white;
          font-size: 13px;
      }
