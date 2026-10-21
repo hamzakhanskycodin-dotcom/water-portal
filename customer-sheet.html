@@ -94,6 +94,7 @@
 
         async function loadCustomers() {
             try {
+              
                 const response = await fetch(`${API_BASE_URL}/customers`);
 
                 // Agar server error de (like 500), to catch block me bhej dein
