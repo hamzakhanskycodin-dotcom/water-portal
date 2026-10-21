@@ -45,7 +45,30 @@
             margin: 0;
         }
 
-        
+        @media (max-width: 576px) {
+
+            /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
+            .card {
+                padding: 10px 6px !important;
+                margin-bottom: 0px !important;
+
+                /* YEH 2 LINES ZAROOR ADD KAREIN: */
+                min-height: 85px !important;
+                /* Saare cards ko zabardasti ek jitni height milegi */
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                /* Text aur Number barabar spread honge */
+            }
+
+            /* Iske sath hi h6 ka font thoda aur compressed karein taake wrap kam ho */
+            .card h6 {
+                font-size: 11px !important;
+                line-height: 1.2 !important;
+                margin-bottom: 2px !important;
+            }
+
+        }
     </style>
 </head>
 
@@ -60,7 +83,7 @@
         </div>
     </nav>
 
-    <div class="container py-4">
+    <div class="container-fluid py-4 px-2">
         <div class="d-flex justify-content-end mb-4">
             <a href="./customer-sheet.html" class="btn btn-warning fw-bold py-2 px-4 shadow-sm text-dark">📊 Customer
                 30-Day Sheet</a>
@@ -141,7 +164,7 @@
                     <thead class="table-dark" style="position: sticky; top:0; z-index: 10;">
                         <tr>
                             <th style="width: 100px;">DATE</th>
-                            <th class= "bg-success">COUNTER SALE</th>
+                            <th class="bg-success">COUNTER SALE</th>
                             <th style="background-color: #1d2b64;">HAMZA SUPPLIER</th>
                             <th style="background-color: #4facfe;">ARSALAN BHAI</th>
                             <th style="background-color: #ff4b5c;">MAKKAH PLANT</th>
