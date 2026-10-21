@@ -33,7 +33,6 @@
                 color: white;
             }
         }
-        
     </style>
 
 </head>
@@ -76,7 +75,7 @@
     </div>
 
     <script>
-        const API_BASE_URL = "https://vercel.app";
+        const API_BASE_URL = "/api";
 
         if (!localStorage.getItem('loggedInUser')) { window.location.href = 'index.html'; }
 
@@ -95,7 +94,10 @@
 
         async function loadCustomers() {
             try {
-                const response = await fetch('/api/customers');
+                // Line 97 ko is tarah update karein:
+                const response = await fetch(`${API_BASE_URL}/customers`);
+
+
                 customersData = await response.json();
                 renderMatrix();
             } catch (err) {
