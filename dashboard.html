@@ -48,47 +48,50 @@
         /* Mobile (375px aur choti screens) ke liye special responsive settings */
         @media (max-width: 576px) {
 
-            /* Cards ko aik row mein 2-2 karke chota dikhane ke liye */
-            .row.g-3.mb-4 .col-md-4,
-            .row.g-3.mb-4 .col-md-3 {
-                width: 50% !important;
-                float: left;
+            /* Bootstrap row ko flex wrap grid mein force karne ke liye */
+            .row.g-3 {
+                display: flex !important;
+                flex-wrap: wrap !important;
             }
 
-            /* Cards ki padding aur fonts chote karne ke liye */
+            /* Cards wale saare columns ko 50% width dekar 2-2 split karne ke liye */
+            .row.g-3 .col-md-4,
+            .row.g-3 .col-md-3 {
+                flex: 0 0 50% !important;
+                max-width: 50% !important;
+                padding: 4px !important;
+                /* Spacing thodi kam karne ke liye */
+            }
+
+            /* Cards ki internal padding aur fonts chote karne ke liye */
             .card {
-                padding: 8px !important;
-                margin-bottom: 5px;
+                padding: 10px 8px !important;
+                margin-bottom: 0px !important;
+                height: 100% !important;
+                /* Saare cards ki height barabar rahe */
             }
 
             .card h6 {
                 font-size: 11px !important;
-                margin-bottom: 2px;
+                margin-bottom: 4px;
+                white-space: nowrap;
+                /* Text line break na ho */
             }
 
             .card h3 {
-                font-size: 16px !important;
+                font-size: 15px !important;
             }
 
             /* Table ke cells aur inputs ko mazeed compress karne ke liye */
             .matrix-table th,
             .matrix-table td {
-                padding: 3px !important;
+                padding: 4px 2px !important;
                 font-size: 11px !important;
             }
 
             .table-input {
                 font-size: 11px !important;
                 padding: 2px !important;
-            }
-
-            /* Heading aur buttons ko chota karne ke liye */
-            h4 {
-                font-size: 16px !important;
-            }
-
-            .navbar-brand {
-                font-size: 14px !important;
             }
         }
     </style>
