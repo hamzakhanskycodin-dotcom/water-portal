@@ -45,55 +45,7 @@
             margin: 0;
         }
 
-        /* Mobile (375px aur choti screens) ke liye special responsive settings */
-        @media (max-width: 576px) {
-
-            /* Bootstrap row ko flex wrap grid mein force karne ke liye */
-            .row.g-3 {
-                display: flex !important;
-                flex-wrap: wrap !important;
-            }
-
-            /* Cards wale saare columns ko 50% width dekar 2-2 split karne ke liye */
-            .row.g-3 .col-md-4,
-            .row.g-3 .col-md-3 {
-                flex: 0 0 50% !important;
-                max-width: 50% !important;
-                padding: 4px !important;
-                /* Spacing thodi kam karne ke liye */
-            }
-
-            /* Cards ki internal padding aur fonts chote karne ke liye */
-            .card {
-                padding: 10px 8px !important;
-                margin-bottom: 0px !important;
-                height: 100% !important;
-                /* Saare cards ki height barabar rahe */
-            }
-
-            .card h6 {
-                font-size: 11px !important;
-                margin-bottom: 4px;
-                white-space: nowrap;
-                /* Text line break na ho */
-            }
-
-            .card h3 {
-                font-size: 15px !important;
-            }
-
-            /* Table ke cells aur inputs ko mazeed compress karne ke liye */
-            .matrix-table th,
-            .matrix-table td {
-                padding: 4px 2px !important;
-                font-size: 11px !important;
-            }
-
-            .table-input {
-                font-size: 11px !important;
-                padding: 2px !important;
-            }
-        }
+        
     </style>
 </head>
 
@@ -117,20 +69,20 @@
         <h4 class="fw-bold mb-3 text-secondary">Analytics & Progress Summary (Live Cloud Sync)</h4>
 
         <!-- Row 1: Summary Cards -->
-        <div class="row g-3 mb-5">
+        <div class="row g-3 mb-4">
             <div class="col-md-12">
                 <div class="card bg-primary text-white p-3  shadow-sm border-0">
                     <h6 class="text-center">Total Supply (Grand Total)</h6>
                     <h3 class="text-center" id="statWeeklyBottles">0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card bg-success text-white p-3 shadow-sm border-0">
                     <h6>Total Counter Sales</h6>
                     <h3 id="statsSales">Rs. 0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card text-white p-3 shadow-sm border-0"
                     style="background: linear-gradient(135deg, #1d2b64, #7382be);">
                     <h6>Hamza Supplier Total</h6>
@@ -143,38 +95,38 @@
         <!-- Row 2: Plants Specific Cards -->
         <div class="row g-3 mb-4">
 
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card text-white p-3 shadow-sm border-0" style="background-color: #4facfe;">
                     <h6>Arsalan Bhai Total</h6>
                     <h3 id="cardArsalanBhai">0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card text-white p-3 shadow-sm border-0" style="background-color: #ff4b5c;">
                     <h6>Makkah Plant Total</h6>
                     <h3 id="cardMakkahPlant">0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card text-white p-3 shadow-sm border-0" style="background-color: #ffb400;">
                     <h6>Jutt Plant Total</h6>
                     <h3 id="cardJuttPlant">0</h3>
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card bg-danger text-white p-3 shadow-sm border-0">
                     <h6>Total Borrowed Bottles</h6>
                     <h3 id="statBorrow">0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card bg-secondary text-white p-3 shadow-sm border-0">
                     <h6>Fuel Exp. Total</h6>
                     <h3 id="cardFuelExpense">Rs. 0</h3>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-6 col-md-6">
                 <div class="card bg-dark text-white p-3 shadow-sm border-0">
                     <h6>Other Exp. Total</h6>
                     <h3 id="cardOtherPayments">Rs. 0</h3>
