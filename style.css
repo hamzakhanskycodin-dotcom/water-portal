@@ -150,6 +150,10 @@
          flex: 0 0 100% !important;
          max-width: 100% !important;
      }
+     .welcome {
+         font-size: 10px !important;
+         /* Mobile par welcome text chota ho jaye */
+     }
 
 
  }
