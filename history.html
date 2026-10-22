@@ -241,25 +241,67 @@
         }
 
         function calculateAndRenderHistory(mongoData) {
-            let summary = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, fuelExpense: 0, otherPayments: 0 };
+            // 1. Top Cards ke liye sums object setup
+            let sums = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, fuelExpense: 0, otherPayments: 0 };
 
+            // 2. 31 Days ka empty layout array setup (Taki blank layout fill ho sake)
+            let historyDaysArray = {};
+            for (let d = 1; d <= 31; d++) {
+                historyDaysArray[d] = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
+            }
+
+            // 3. Database array se data utha kar global calculations aur days map me daalna
             mongoData.forEach(item => {
-                summary.counterSale += (item.counterSale || 0);
-                summary.hamzaSupplier += (item.hamzaSupplier || 0);
-                summary.arsalanBhai += (item.arsalanBhai || 0);
-                summary.makkahPlant += (item.makkahPlant || 0);
-                summary.juttPlant += (item.juttPlant || 0);
-                summary.fuelExpense += (item.fuelExpense || 0);
-                summary.otherPayments += (item.otherPayments || 0);
-                summary.totalSupply += (item.totalSupply || item.total_supply || 0);
+                if (item && item.day) {
+                    historyDaysArray[item.day] = item; // Us din ka data safe save
+
+                    sums.counterSale += (item.counterSale || 0);
+                    sums.hamzaSupplier += (item.hamzaSupplier || 0);
+                    sums.arsalanBhai += (item.arsalanBhai || 0);
+                    sums.makkahPlant += (item.makkahPlant || 0);
+                    sums.juttPlant += (item.juttPlant || 0);
+                    sums.fuelExpense += (item.fuelExpense || 0);
+                    sums.otherPayments += (item.otherPayments || 0);
+                    sums.totalSupply += (item.totalSupply || item.total_supply || 0);
+                }
             });
 
-            // Top cards update karein
-            renderAnalytics(summary);
+            // 4. Analytics cards update trigger
+            renderAnalytics(sums);
 
-            // 💡 Customer layout update karne ke liye dashboard dynamic object structure map chalayein
-            // Agar aap customer sheet integration alag collection se kar rahe hain to yahan filter logic map hogi
+            // 5. Monthly Log Chart grid generator trigger (Day 1 se Day 31)
+            renderHistoryTableGrid(historyDaysArray);
         }
+
+        // 6. Monthly Log Chart grid table render karne ka solid read-only function
+        function renderHistoryTableGrid(daysData) {
+            // Apni HTML table body ki ID check karein (Aam taur par matrixTableBody ya logsTableBody hoti hai)
+            const tableBody = document.getElementById('matrixTableBody') || document.getElementById('logsTableBody');
+            if (!tableBody) return;
+
+            let tableRowsHtml = '';
+
+            for (let day = 1; day <= 31; day++) {
+                const dData = daysData[day] || {};
+
+                // Data fields badalne ke bajay read-only cells me clean text display karna
+                tableRowsHtml += `<tr>
+            <td><b>Day ${day}</b></td>
+            <td class="text-success fw-bold text-center">${dData.counterSale || 0}</td>
+            <td class="text-center">${dData.hamzaSupplier || 0}</td>
+            <td class="text-center">${dData.arsalanBhai || 0}</td>
+            <td class="text-center">${dData.makkahPlant || 0}</td>
+            <td class="text-center">${dData.juttPlant || 0}</td>
+            <td class="text-primary fw-bold text-center">${dData.totalSupply || dData.total_supply || 0}</td>
+            <td class="text-danger fw-bold text-center">${dData.borrowBottles || 0}</td>
+            <td class="text-secondary text-center">${dData.fuelExpense || 0}</td>
+            <td class="text-dark text-center">${dData.otherPayments || 0}</td>
+           </tr>`;
+            }
+
+            tableBody.innerHTML = tableRowsHtml;
+        }
+
 
 
 
