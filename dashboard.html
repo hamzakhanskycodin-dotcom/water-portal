@@ -168,30 +168,30 @@
             }
         }
 
-        function renderTableStructure() {
-            let tableRowsHtml = '';
+       function renderTableStructure() {
+  let tableRowsHtml = '';
 
-            for (let day = 1; day <= 31; day++) {
-                const rowClass = (day === currentDayNum) ? 'class="current-day-row"' : '';
-                const dData = clientDataArray[day] || {};
+  for (let day = 1; day <= 31; day++) {
+    const rowClass = (day === currentDayNum) ? 'class="current-day-row"' : '';
+    const dData = clientDataArray[day] || {};
 
-                tableRowsHtml += `<tr ${rowClass}>
+    tableRowsHtml += `<tr ${rowClass}>
       <td><b>Day ${day}</b></td>
-      <td><input type="number" class="table-input text-success fw-bold" value="${dData.counterSale || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'counterSale', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.hamzaSupplier || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'hamzaSupplier', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
-      <td><input type="number" class="table-input id-row-supply-${day} text-primary fw-bold" value="${dData.totalSupply || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
-      <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
-      <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
-      <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" onchange="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
+      <td><input type="number" class="table-input text-success fw-bold" value="${dData.counterSale || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'counterSale', this.value)"></td>
+      <td><input type="number" class="table-input" value="${dData.hamzaSupplier || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'hamzaSupplier', this.value)"></td>
+      <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
+      <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
+      <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
+      <td><input type="number" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
+      <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
+      <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
+      <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
     </tr>`;
-            }
+  }
 
-            tbody.innerHTML = tableRowsHtml;
-            calculateTopAnalytics();
-        }
+  tbody.innerHTML = tableRowsHtml;
+  calculateTopAnalytics();
+}
 
 
         async function sendUpdateToBackend(day, field, value) {
