@@ -245,6 +245,7 @@
      .table-responsive table tbody tr td:first-child {
          position: sticky !important;
          left: 0 !important;
+         top: 0 !important;   /* Upar jaane par na hile */
          background-color: #ffffff !important;
          /* Solid opaque layer fill */
          color: #212529 !important;
@@ -321,14 +322,7 @@
      }
 
      
-    /* 📌 2. Saari Main Headings ko black aur top par stick rakhna */
-    .table-responsive table thead tr th {
-        position: sticky !important;
-        top: 0 !important;
-        background-color: #212529 !important;
-        color: #ffffff !important;
-        z-index: 1000 !important;
-    }
+    
  }
 
 
