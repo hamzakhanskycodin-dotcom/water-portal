@@ -100,13 +100,19 @@
             </div>
         </div>
 
-        <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart (Auto-Saves to Cloud)</h4>
-        <!-- Live Month Heading -->
+        <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart </h4>
+        <!-- Live Month Heading with Auto-Script -->
         <div class="container mt-4">
             <h2 class="text-center text-primary fw-bold mb-3">
-                Live Tracking For: <span id="currentLiveMonthHeading">-</span>
+                Live Tracking For:
+                <span id="currentLiveMonthHeading">
+                    <script>
+                        document.write(new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }));
+                    </script>
+                </span>
             </h2>
         </div>
+
 
         <div class="card p-3 shadow-sm border-0 mb-5">
             <div class="table-responsive" style="max-height: 650px; overflow-y: auto;">
@@ -136,9 +142,6 @@
         </div>
     </div>
     <script>
-                document.write(new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }));
-
-
         const API_BASE_URL = "/api";
 
         const activeUser = localStorage.getItem('loggedInUser') || "Authorized User";
