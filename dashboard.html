@@ -101,16 +101,24 @@
         </div>
 
         <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart </h4>
-        <!-- Live Month Heading with Auto-Script -->
+        <!-- Dynamic Month Slider Navigation (Line 104 se 114 ki jagah lagayein) -->
         <div class="container mt-4">
-            <h2 class="text-center text-primary fw-bold mb-3">
-               
-                <span id="currentLiveMonthHeading">
-                    <script>
-                        document.write(new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }));
-                    </script>
-                </span>
-            </h2>
+            <div class="d-flex justify-content-center align-items-center gap-4 mb-3">
+                <!-- Previous Month Button -->
+                <button class="btn btn-outline-primary fw-bold px-3 shadow-sm" onclick="navigateMonth(-1)">
+                    &lt; Prev
+                </button>
+
+                <!-- Dynamic Month Display Heading -->
+                <h2 class="text-center text-primary fw-bold m-0" style="min-width: 250px;">
+                    <span id="currentLiveMonthHeading">-</span>
+                </h2>
+
+                <!-- Next Month Button -->
+                <button class="btn btn-outline-primary fw-bold px-3 shadow-sm" onclick="navigateMonth(1)">
+                    Next &gt;
+                </button>
+            </div>
         </div>
 
 
@@ -142,6 +150,92 @@
         </div>
     </div>
     <script>
+        // 1. Global Date State Setup (Taki pata rahe user kis month par khada hai)
+        let currentTrackingDate = new Date();
+
+        // 2. DOMContentLoaded listener ke andar ka code update karein
+        document.addEventListener("DOMContentLoaded", () => {
+            // Page load hote hi current system month ka data display aur fetch karein
+            updateMonthDisplay();
+        });
+
+        // 3. Month Text aur Heading ko dynamically update karne ka function
+        function updateMonthDisplay() {
+            const options = { month: 'long', year: 'numeric' };
+            const formattedMonth = currentTrackingDate.toLocaleDateString('default', options);
+
+            // Heading me month text set karein
+            const headingElem = document.getElementById("currentLiveMonthHeading");
+            if (headingElem) {
+                headingElem.innerText = formattedMonth;
+            }
+
+            // 💡 Backend se us selected month ka query URL taiyar karein (Format: YYYY-MM)
+            const year = currentTrackingDate.getFullYear();
+            const month = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
+            const targetMonthParam = `${year}-${month}`;
+
+            // Naye selected mahine ka data database se load karne ke liye call karein
+            fetchLogsForSelectedMonth(targetMonthParam);
+        }
+
+        // 4. Slider ke (<) aur (>) buttons ka logic
+        function navigateMonth(direction) {
+            // direction = -1 matlab pichla mahina, direction = 1 matlab agla mahina
+            currentTrackingDate.setMonth(currentTrackingDate.getMonth() + direction);
+
+            // Display aur data reload trigger karein
+            updateMonthDisplay();
+        }
+
+        // 5. Safe dynamic database data fetching logic
+        async function fetchLogsForSelectedMonth(monthYearString) {
+            try {
+                // Backend ko batayein ki kis specific month ka data chahiye
+                const response = await fetch(`${API_BASE_URL}/logs?month=${monthYearString}`);
+                let mongoData = await response.json();
+
+                if (!Array.isArray(mongoData)) {
+                    mongoData = [];
+                }
+
+                // Live Grid input data memory array ko pehle khali default/0 set karein
+                // (Taki naye ya empty month par purana data overlap na kare)
+                resetClientDataArrayToZero();
+
+                // Receive hua data array map karein
+                mongoData.forEach(item => {
+                    if (item && item.day && clientDataArray[item.day]) {
+                        clientDataArray[item.day] = item;
+                    }
+                });
+
+                // Dashboard components ko refresh karein
+                renderTableStructure();
+
+            } catch (error) {
+                console.error("Failed to navigate/load month data:", error);
+            }
+        }
+
+        // 6. Helper: Data table memory helper grid reset function
+        function resetClientDataArrayToZero() {
+            for (let day = 1; day <= 31; day++) {
+                clientDataArray[day] = {
+                    day: day,
+                    counterSale: 0,
+                    hamzaSupplier: 0,
+                    arsalanBhai: 0,
+                    makkahPlant: 0,
+                    juttPlant: 0,
+                    totalSupply: 0,
+                    borrowBottles: 0,
+                    fuelExpense: 0,
+                    otherPayments: 0
+                };
+            }
+        }
+
         const API_BASE_URL = "/api";
 
         const activeUser = localStorage.getItem('loggedInUser') || "Authorized User";
