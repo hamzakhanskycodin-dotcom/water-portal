@@ -172,7 +172,7 @@ app.post('/api/customers/update', async (req, res) => {
         // Find standard document and update the nested map property directly
         const updatedCustomer = await Customer.findByIdAndUpdate(
             id,
-            { \$set: { [updatePath]: numVal } },
+            { $set: { [updatePath]: numVal } },
             { new: true, upsert: false } // Custom properties match
         );
 
