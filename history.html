@@ -153,8 +153,28 @@
                         </tr>
                     </thead>
                     <tbody id="matrixTableBody"></tbody>
-
                     <tfoot id="matrixFooter"> </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="container mt-5 mb-5">
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white fw-bold d-flex justify-content-between align-items-center">
+                <span>🗓️ 30 Days Archived Customers Entry Sheet</span>
+                <span class="badge bg-light text-success fw-bold">Read-Only View</span>
+            </div>
+            <div class="card-body table-responsive p-0" style="max-height: 500px; overflow: both;">
+                <table class="table table-bordered table-striped align-middle m-0" id="historyCustomerSheetTable"
+                    style="border-collapse: separate; border-spacing: 0;">
+                    <thead class="table-dark text-center" style="position: sticky; top: 0; z-index: 10;">
+                        <tr id="historyCustomerHeaderRow">
+                            <!-- JavaScript se dynamically generated headers yahan aayenge -->
+                        </tr>
+                    </thead>
+                    <tbody id="historyCustomerTableBody">
+                        <!-- JavaScript se dynamic customers data rows fill hongi -->
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -210,6 +230,7 @@
 
                 // Database data pass karke calculation aur matrix grid generator render chalayein
                 calculateAndRenderHistory(mongoData);
+                renderHistoryCustomerMatrix(mongoData.customers || []);
 
             } catch (err) {
                 console.error("Error loading archives:", err);
@@ -282,41 +303,90 @@
 
 
 
-       // ✅ Line 286 se 314 tak ka poora purana block hata kar yeh copy-paste karein:
-function renderAnalytics(summary) {
-    // 1. Total Supply Card
-    if (document.getElementById('grandTotal')) {
-        document.getElementById('grandTotal').innerText = (summary.totalSupply || 0).toLocaleString();
-    }
-    // 2. Total Counter Sales Card
-    if (document.getElementById('counterSales')) {
-        document.getElementById('counterSales').innerText = "Rs. " + (summary.counterSale || 0).toLocaleString();
-    }
-    // 3. Hamza Supplier Card
-    if (document.getElementById('hamzaSupplier')) {
-        document.getElementById('hamzaSupplier').innerText = (summary.hamzaSupplier || 0).toLocaleString();
-    }
-    // 4. Arsalan Bhai Card
-    if (document.getElementById('arsalanBhai')) {
-        document.getElementById('arsalanBhai').innerText = (summary.arsalanBhai || 0).toLocaleString();
-    }
-    // 5. Makkah Plant Card
-    if (document.getElementById('makkahPlant')) {
-        document.getElementById('makkahPlant').innerText = (summary.makkahPlant || 0).toLocaleString();
-    }
-    // 6. Jutt Plant Card
-    if (document.getElementById('juttPlant')) {
-        document.getElementById('juttPlant').innerText = (summary.juttPlant || 0).toLocaleString();
-    }
-    // 7. Fuel Exp Card
-    if (document.getElementById('fuelExpense')) {
-        document.getElementById('fuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
-    }
-    // 8. Other Exp Card
-    if (document.getElementById('otherPayments')) {
-        document.getElementById('otherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
-    }
-}
+        // ✅ Line 286 se 314 tak ka poora purana block hata kar yeh copy-paste karein:
+        function renderAnalytics(summary) {
+            // 1. Total Supply Card
+            if (document.getElementById('grandTotal')) {
+                document.getElementById('grandTotal').innerText = (summary.totalSupply || 0).toLocaleString();
+            }
+            // 2. Total Counter Sales Card
+            if (document.getElementById('counterSales')) {
+                document.getElementById('counterSales').innerText = "Rs. " + (summary.counterSale || 0).toLocaleString();
+            }
+            // 3. Hamza Supplier Card
+            if (document.getElementById('hamzaSupplier')) {
+                document.getElementById('hamzaSupplier').innerText = (summary.hamzaSupplier || 0).toLocaleString();
+            }
+            // 4. Arsalan Bhai Card
+            if (document.getElementById('arsalanBhai')) {
+                document.getElementById('arsalanBhai').innerText = (summary.arsalanBhai || 0).toLocaleString();
+            }
+            // 5. Makkah Plant Card
+            if (document.getElementById('makkahPlant')) {
+                document.getElementById('makkahPlant').innerText = (summary.makkahPlant || 0).toLocaleString();
+            }
+            // 6. Jutt Plant Card
+            if (document.getElementById('juttPlant')) {
+                document.getElementById('juttPlant').innerText = (summary.juttPlant || 0).toLocaleString();
+            }
+            // 7. Fuel Exp Card
+            if (document.getElementById('fuelExpense')) {
+                document.getElementById('fuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
+            }
+            // 8. Other Exp Card
+            if (document.getElementById('otherPayments')) {
+                document.getElementById('otherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
+            }
+        }
+        function renderHistoryCustomerMatrix(customersList) {
+            const headerRow = document.getElementById("historyCustomerHeaderRow");
+            const tableBody = document.getElementById("historyCustomerTableBody");
+
+            if (!headerRow || !tableBody) return;
+
+            headerRow.innerHTML = '';
+            tableBody.innerHTML = '';
+
+            // 1. Headers generate karna (Customer Name | D1 -> D31 | Daily Total)
+            let headerHtml = `<th style="min-width: 160px; vertical-align: middle;">Customer Name</th>`;
+            for (let d = 1; d <= 31; d++) {
+                headerHtml += `<th class="text-center" style="min-width: 65px; vertical-align: middle;">D${d}</th>`;
+            }
+            headerHtml += `<th style="min-width: 120px; vertical-align: middle;">Daily Total</th>`;
+            headerRow.innerHTML = headerHtml;
+
+            // 2. Empty check validation array
+            if (!customersList || customersList.length === 0) {
+                tableBody.innerHTML = `<tr><td colspan="33" class="text-center text-muted py-4">No customer entries archived found for this month.</td></tr>`;
+                return;
+            }
+
+            // 3. Customers Grid rows matrix mapping loop
+            let tableRowsHtml = '';
+
+            customersList.forEach(cust => {
+                tableRowsHtml += `<tr>
+            <td class="fw-bold">${cust.name || 'Unnamed'}</td>`;
+
+                let customerRowTotal = 0;
+
+                // Day 1 se Day 31 tak horizontal cells generator
+                for (let d = 1; d <= 31; d++) {
+                    // Check karein aapke customer schema me data object path keys kya hain (cust.days[d] ya cust.monthlyLogs[d])
+                    const dayValue = (cust.days && cust.days[d]) ? Number(cust.days[d]) : 0;
+                    customerRowTotal += dayValue;
+
+                    const cellClass = dayValue > 0 ? 'text-success fw-bold text-center' : 'text-center text-muted';
+                    tableRowsHtml += `<td class="${cellClass}">${dayValue}</td>`;
+                }
+
+                // Horizontal line row ke strict end me deep freeze matching sticky totals cell
+                tableRowsHtml += `<td class="text-center fw-bold font-monospace">${customerRowTotal}</td></tr>`;
+            });
+
+            tableBody.innerHTML = tableRowsHtml;
+        }
+
 
 
     </script>
