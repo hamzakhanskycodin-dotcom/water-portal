@@ -205,6 +205,7 @@
                 select.appendChild(opt);
             }
         }
+        const tbody = document.getElementById('matrixTableBody');
 
         // // 2. Generate D1 to D30 Table Headers
         // function generateTableHeaders() {
@@ -278,7 +279,7 @@
 
         // 6. Monthly Log Chart grid table render karne ka solid read-only function
         function renderHistoryTableGrid(daysData) {
-            const tbody = document.getElementById('matrixTableBody');
+            
 
             let tableRowsHtml = '';
 
