@@ -10,54 +10,97 @@
     <link rel="stylesheet" href="style.css">
     <style>
         @media (max-width: 576px) {
-
-            #headerRow th:first-child,
-            .table tbody tr td:first-child {
-                position: sticky;
-                left: 0;
-                min-width: 120px !important;
-                /* Width 180px se kam karke 120px kar di */
-                max-width: 120px !important;
-                background-color: #fff !important;
-                /* Background color zaroori hai taake piche ka text nazar na aaye */
-                z-index: 10;
-                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-                /* Optional: halki si line separation ke liye */
+            .matrix-table {
+                border-collapse: separate !important;
+                border-spacing: 0 !important;
             }
 
-            /* 2. Header row ke first child ka z-index zyada rakhna hoga */
+            /* 1. Header ke pehle cell (Customer Name) ka Sticky Framework */
             #headerRow th:first-child {
-                z-index: 11;
+                position: sticky !important;
+                left: 0 !important;
                 background-color: #212529 !important;
-                /* Aapka dark header color matching ke liye */
-                color: white;
+                /* Uniform black layer */
+                color: white !important;
+                z-index: 999 !important;
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2) !important;
             }
 
-            #matrixFooter {
-                position: sticky;
-                bottom: 0;
-                z-index: 20;
-                /* Taake yeh scroll hone wale text ke upar rahe */
-                box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-                /* Optional: halki si upper line line decoration ke liye */
+            /* 2. Body ke pehle cell (Actual Names) ka Sticky Framework */
+            #customerTableBody tr td:first-child {
+                position: sticky !important;
+                left: 0 !important;
+                background-color: #212529 !important;
+                /* Uniform text contrast layout matching image */
+                color: #ffffff !important;
+                font-weight: bold !important;
+                z-index: 99 !important;
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
+                font-size: 12px !important;
+                text-align: left !important;
+                padding-left: 8px !important;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2) !important;
             }
 
-            /* 2. Daily Total row ke andar background color lazmi lagana hai taake text piche na chupe */
-            #matrixFooter tr {
-                background-color: #f8f9fa !important;
-                /* Aapka table-secondary ya bg-light matching color */
+            /* 3. Footer (Daily Total:) ke pehle cell ka Sticky Framework */
+            #matrixFooter tr td:first-child {
+                position: sticky !important;
+                left: 0 !important;
+                background-color: #ffffff !important;
+                color: #212529 !important;
+                font-weight: bold !important;
+                z-index: 99 !important;
+                width: 110px !important;
+                min-width: 110px !important;
+                max-width: 110px !important;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15) !important;
             }
 
-            /* 3. Daily Total ke pehle column (jo text hai) ko bhi left side par freeze rakhne ke liye */
-            #matrixFooter td:first-child {
-                position: sticky;
-                left: 0;
-                min-width: 120px !important;
-                max-width: 120px !important;
-                background-color: #f8f9fa !important;
-                z-index: 21;
+            /* 📌 300px - 500px Mobile View Screen Compressions */
+
+            .container.py-4 {
+                padding-left: 4px !important;
+                padding-right: 4px !important;
+            }
+
+            .card {
+                padding: 8px !important;
+            }
+
+            h3 {
+                font-size: 16px !important;
+                text-align: center !important;
+            }
+
+            /* Slider text and navigation scaling */
+            .bg-secondary {
+                padding: 4px 8px !important;
+                gap: 6px !important;
+            }
+
+            .bg-secondary span {
+                font-size: 12px !important;
+                min-width: 100px !important;
+            }
+
+            .bg-secondary button {
+                padding: 2px 6px !important;
+                font-size: 12px !important;
+            }
+
+            /* Input element dimensions inside cells */
+            .matrix-input {
+                width: 45px !important;
+                padding: 2px !important;
+                font-size: 12px !important;
             }
         }
+
 
         /* 📌 Customer Name (Pehla Column) Exact Sticky Configuration */
         #customerTableBody td:first-child,
@@ -94,18 +137,22 @@
 </head>
 
 <body class="bg-light">
-    <nav class="navbar navbar-expand-lg  shadow-sm">
-        <div class="container">
-            <span class="navbar-brand fw-bold text-wrap m-0" style="font-size: 20px; max-width: 50%;">Monthly Customer
-                Supplies Sheet</span>
-
-
-            <div class="d-flex align-items-center gap-2">
-                <a href="dashboard.html" class="btn btn-dange btn-sm fw-bold">Dashboard Back</a>
-                <button onclick="logout()" class="btn btn-dange btn-sm fw-bold">Logout</button>
+    <!-- ✅ Line 97 se 108 ki jagah yeh single-line responsive navbar lagayein: -->
+    <nav class="navbar navbar-expand-lg shadow-sm bg-primary py-2">
+        <div class="container d-flex justify-content-between align-items-center flex-nowrap px-2">
+            <span class="navbar-brand fw-bold text-white text-wrap m-0"
+                style="font-size: 14px; max-width: 50%; line-height: 1.2;">
+                Monthly Customer Supplies Sheet
+            </span>
+            <div class="d-flex align-items-center gap-1">
+                <a href="dashboard.html" class="btn btn-danger btn-sm fw-bold px-2 py-1"
+                    style="font-size: 11px; white-space: nowrap;">Dashboard Back</a>
+                <button onclick="logout()" class="btn btn-danger btn-sm fw-bold px-2 py-1"
+                    style="font-size: 11px; white-space: nowrap;">Logout</button>
             </div>
         </div>
     </nav>
+
     <div class="container py-4  ">
         <div class="card p-2 p-md-4 shadow-sm border-0">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
@@ -320,7 +367,7 @@
         }
 
 
-        
+
         function renderColumnTotals() {
             const footer = document.getElementById('matrixFooter');
             if (!footer || customersData.length === 0) return;
