@@ -318,69 +318,74 @@
         }
 
 
-        // 5. Render History Customer Sheet Table Rows
+        
         function renderHistoryMatrix(customers) {
+            const headerRow = document.getElementById("historyCustomerHeaderRow") || document.querySelector("#historyCustomerTable thead tr");
             const tbody = document.getElementById("matrixTableBody");
             const tfoot = document.getElementById("matrixFooter");
-            tbody.innerHTML = "";
-            tfoot.innerHTML = "";
 
-            if (customers.length === 0) {
+            if (!tbody) return;
+
+            // Purana saara design reset/clear karein
+            if (headerRow) headerRow.innerHTML = '';
+            tbody.innerHTML = '';
+            if (tfoot) tfoot.innerHTML = '';
+
+            // 1. Empty state check
+            if (!customers || customers.length === 0) {
+                if (headerRow) headerRow.innerHTML = `<th>Days / Customers</th><th>No Customers Found</th>`;
                 tbody.innerHTML = `<tr><td colspan="32" class="text-center text-muted py-4">No records found for this archived month.</td></tr>`;
                 return;
             }
 
-            let dailyTotals = Array(32).fill(0); // 1 to 30 index tracking
-
+            // 2. Table Headers Setup (DATE | Customer 1 | Customer 2 | ... | Daily Total)
+            let headerHtml = `<th style="min-width: 120px;" class="bg-dark text-white text-center">DATE</th>`;
             customers.forEach(cust => {
-                let tr = document.createElement("tr");
-                let nameTd = document.createElement("td");
-                nameTd.className = "text-primary fw-bold";
-                nameTd.innerText = cust.name;
-                tr.appendChild(nameTd);
-
-                let customerRowTotal = 0;
-                let dataLog = cust.monthlyLogs || {};
-
-                for (let d = 1; d <= 30; d++) {
-                    let td = document.createElement("td");
-                    td.className = "text-center text-muted";
-                    let val = dataLog[d] ? dataLog[d].totalSupply || 0 : 0;
-                    td.innerText = val;
-                    tr.appendChild(td);
-
-                    customerRowTotal += val;
-                    dailyTotals[d] += val;
-                }
-
-                let totalTd = document.createElement("td");
-                totalTd.className = "fw-bold text-center text-dark bg-light";
-                totalTd.innerText = customerRowTotal;
-                tr.appendChild(totalTd);
-                tbody.appendChild(tr);
+                headerHtml += `<th class="text-center bg-primary text-white" style="min-width: 130px;">${cust.name || 'Unnamed'}</th>`;
             });
+            headerHtml += `<th style="min-width: 120px;" class="bg-dark text-white text-center">DAILY TOTAL</th>`;
+            if (headerRow) headerRow.innerHTML = headerHtml;
 
-            // Footer Row generation for daily totals
-            let footTr = document.createElement("tr");
-            let footLabelTd = document.createElement("td");
-            footLabelTd.innerText = "Daily Total:";
-            footTr.appendChild(footLabelTd);
-
+            // Daily totals tracking array aur Grand Total variable initialized
+            let dailyTotalsArray = Array(32).fill(0);
             let grandTotalSum = 0;
-            for (let d = 1; d <= 30; d++) {
-                let td = document.createElement("td");
-                td.className = "text-center";
-                td.innerText = dailyTotals[d];
-                footTr.appendChild(td);
-                grandTotalSum += dailyTotals[d];
-            }
 
-            let finalTotalTd = document.createElement("td");
-            finalTotalTd.className = "text-center text-primary fs-5";
-            finalTotalTd.innerText = grandTotalSum;
-            footTr.appendChild(finalTotalTd);
-            tfoot.appendChild(footTr);
+            // 3. Day 1 se Day 30 tak ki Rows matrix generate karein
+            let tableRowsHtml = '';
+            for (let day = 1; day <= 30; day++) {
+                tableRowsHtml += `<tr><td class="fw-bold text-center bg-light">Day ${day}</td>`;
+                let dayRowTotal = 0;
+
+                customers.forEach(cust => {
+                    // Safe key value lookup
+                    const datalog = cust.monthlyLogs || {};
+                    const val = (datalog[day] && datalog[day].totalSupply) ? Number(datalog[day].totalSupply) : 0;
+
+                    dayRowTotal += val;
+                    dailyTotalsArray[day] += val;
+
+                    const cellClass = val > 0 ? 'text-success fw-bold' : 'text-muted';
+                    tableRowsHtml += `<td class="text-center font-monospace ${cellClass}">${val}</td>`;
+                });
+
+                // Row ke aakhir me pure din ka total box column display
+                tableRowsHtml += `<td class="text-center fw-bold bg-light text-dark">${dayRowTotal}</td></tr>`;
+            }
+            tbody.innerHTML = tableRowsHtml;
+
+            // 4. Footer Row Generation (Bottom Calculation Row for grand summaries)
+            if (tfoot) {
+                let footerHtml = `<tr><td class="fw-bold text-center bg-dark text-white">Daily Total:</td>`;
+                for (let day = 1; day <= 30; day++) {
+                    const daySum = dailyTotalsArray[day];
+                    grandTotalSum += daySum;
+                    footerHtml += `<td class="text-center fw-bold font-monospace bg-secondary text-white">${daySum}</td>`;
+                }
+                footerHtml += `<td class="text-center fw-bold bg-success text-white fs-5">${grandTotalSum}</td></tr>`;
+                tfoot.innerHTML = footerHtml;
+            }
         }
+
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
