@@ -203,6 +203,10 @@
             }
             tbody.innerHTML = tableRowsHtml;
             calculateTopAnalytics();
+            // Apne loadHistoryData() function me jahan data successfully fetch hota hai wahan is tarah update karein:
+            const selectedMonthText = document.getElementById("historyMonthSelect").options[document.getElementById("historyMonthSelect").selectedIndex].text;
+            document.getElementById("currentArchiveMonthHeading").innerText = selectedMonthText;
+
         }
 
         async function sendUpdateToBackend(day, field, value) {
