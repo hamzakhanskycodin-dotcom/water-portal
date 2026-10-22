@@ -1,288 +1,312 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>History & Archives - Water Supply Portal</title>
- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History & Archives - Water Supply Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    
-  <link rel="stylesheet" href="style.css">
-  <style>
-    /* Mobile standard freeze columns for History Sheet */
-    @media (max-width: 768px) {
-      #headerRow th:first-child,
-      #matrixTableBody td:first-child,
-      #matrixFooter td:first-child {
-        position: sticky;
-        left: 0;
-        min-width: 120px !important;
-        max-width: 120px !important;
-        background-color: #fff !important;
-        z-index: 10;
-        box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-      }
-      #headerRow th:first-child { z-index: 11; background-color: #212529 !important; color: white; }
-      #matrixFooter { position: sticky; bottom: 0; z-index: 20; box-shadow: 0 -2px 5px rgba(0,0,0,0.1); }
-      #matrixFooter tr, #matrixFooter td:first-child { background-color: #f8f9fa !important; }
-      #matrixFooter td:first-child { z-index: 21; }
-    }
-  </style>
+
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Mobile standard freeze columns for History Sheet */
+        @media (max-width: 768px) {
+
+            #headerRow th:first-child,
+            #matrixTableBody td:first-child,
+            #matrixFooter td:first-child {
+                position: sticky;
+                left: 0;
+                min-width: 120px !important;
+                max-width: 120px !important;
+                background-color: #fff !important;
+                z-index: 10;
+                box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            }
+
+            #headerRow th:first-child {
+                z-index: 11;
+                background-color: #212529 !important;
+                color: white;
+            }
+
+            #matrixFooter {
+                position: sticky;
+                bottom: 0;
+                z-index: 20;
+                box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+            }
+
+            #matrixFooter tr,
+            #matrixFooter td:first-child {
+                background-color: #f8f9fa !important;
+            }
+
+            #matrixFooter td:first-child {
+                z-index: 21;
+            }
+        }
+    </style>
 </head>
+
 <body class="bg-light">
 
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
-    <div class="container d-flex justify-content-between align-items-center">
-      <h1 class="navbar-brand mb-0 h1 fw-bold">History & Archives</h1>
-      <div class="d-flex gap-2">
-        <a href="dashboard.html" class="btn btn-light btn-sm fw-bold">Back to Dashboard</a>
-        <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
-      </div>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm mb-4">
+        <div class="container d-flex justify-content-between align-items-center">
+            <h1 class="navbar-brand mb-0 h1 fw-bold">History & Archives</h1>
+            <div class="d-flex gap-2">
+                <a href="dashboard.html" class="btn btn-light btn-sm fw-bold">Back to Dashboard</a>
+                <button onclick="logout()" class="btn btn-danger btn-sm">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container py-2">
+        <!-- Month Selection Controller -->
+        <div class="card p-3 mb-4 shadow-sm border-0">
+            <div class="row align-items-center">
+                <div class="col-md-4 col-sm-6">
+                    <label for="historyMonthSelect" class="form-label fw-bold">Select Archive Month:</label>
+                    <select id="historyMonthSelect" class="form-select fw-bold border-primary"
+                        onchange="loadHistoryData()">
+                        <!-- JavaScript dynamically inserts past months here -->
+                    </select>
+                </div>
+                <div class="col-md-8 col-sm-6 text-md-end mt-3 mt-md-0">
+                    <span class="badge bg-secondary p-2 fs-6">Viewing Mode: Read-Only Archive</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 1: Analytics & Progress Summary (Dashboard Style) -->
+        <h3 class="text-secondary fw-bold mb-3">Analytics Summary</h3>
+        <div class="row g-3 mb-4">
+            <div class="col-12">
+                <div class="card bg-primary text-white text-center p-3 shadow-sm border-0">
+                    <h5>Total Supply (Grand Total)</h5>
+                    <h2 id="grandTotal" class="fw-bold">0</h2>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-success text-white p-3 shadow-sm border-0">
+                    <h5>Total Counter Sales</h5>
+                    <h3 id="counterSales">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-info text-dark p-3 shadow-sm border-0">
+                    <h5>Hamza Supplier Total</h5>
+                    <h3 id="hamzaSupplier">0</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-warning text-dark p-3 shadow-sm border-0">
+                    <h5>Arsalan Bhai Total</h5>
+                    <h3 id="arsalanBhai">0</h3>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card bg-danger text-white p-3 shadow-sm border-0">
+                    <h5>Makkah Plant Total</h5>
+                    <h3 id="makkahPlant">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-secondary text-white p-3 shadow-sm border-0">
+                    <h5>Jutt Plant Total</h5>
+                    <h3 id="juttPlant">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-dark text-white p-3 shadow-sm border-0">
+                    <h5>Fuel Exp. Total</h5>
+                    <h3 id="fuelExpense">Rs. 0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card bg-light text-dark p-3 shadow-sm border-0">
+                    <h5>Other Exp. Total</h5>
+                    <h3 id="otherPayments">Rs. 0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part 2: Customer 30-Day Sheet Log (Customer Sheet Style) -->
+        <div class="card p-3 shadow-sm border-0 mb-5">
+            <h3 class="text-secondary fw-bold mb-3">Customer Supplies Matrix</h3>
+            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+                <table class="table table-bordered matrix-table bg-white m-0">
+                    <thead class="table-dark sticky-top">
+                        <tr id="headerRow">
+                            <th style="min-width:180px; text-align: left;">Customer Name</th>
+                            <!-- Days D1 to D30 will populate here dynamically -->
+                            <th class="total-column-bg">TOTAL BOTTLES</th>
+                        </tr>
+                    </thead>
+                    <tbody id="matrixTableBody">
+                        <!-- Customer rows will load here -->
+                    </tbody>
+                    <tfoot id="matrixFooter">
+                        <!-- Daily total matching row will load here -->
+                    </tfoot>
+                </table>
+            </div>
+        </div>
     </div>
-  </nav>
 
-  <div class="container py-2">
-    <!-- Month Selection Controller -->
-    <div class="card p-3 mb-4 shadow-sm border-0">
-      <div class="row align-items-center">
-        <div class="col-md-4 col-sm-6">
-          <label for="historyMonthSelect" class="form-label fw-bold">Select Archive Month:</label>
-          <select id="historyMonthSelect" class="form-select fw-bold border-primary" onchange="loadHistoryData()">
-            <!-- JavaScript dynamically inserts past months here -->
-          </select>
-        </div>
-        <div class="col-md-8 col-sm-6 text-md-end mt-3 mt-md-0">
-          <span class="badge bg-secondary p-2 fs-6">Viewing Mode: Read-Only Archive</span>
-        </div>
-      </div>
-    </div>
+    <script>
+        const API_BASE_URL = "/api";
 
-    <!-- Part 1: Analytics & Progress Summary (Dashboard Style) -->
-    <h3 class="text-secondary fw-bold mb-3">Analytics Summary</h3>
-    <div class="row g-3 mb-4">
-      <div class="col-12">
-        <div class="card bg-primary text-white text-center p-3 shadow-sm border-0">
-          <h5>Total Supply (Grand Total)</h5>
-          <h2 id="grandTotal" class="fw-bold">0</h2>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card bg-success text-white p-3 shadow-sm border-0">
-          <h5>Total Counter Sales</h5>
-          <h3 id="counterSales">Rs. 0</h3>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card bg-info text-dark p-3 shadow-sm border-0">
-          <h5>Hamza Supplier Total</h5>
-          <h3 id="hamzaSupplier">0</h3>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card bg-warning text-dark p-3 shadow-sm border-0">
-          <h5>Arsalan Bhai Total</h5>
-          <h3 id="arsalanBhai">0</h3>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="card bg-danger text-white p-3 shadow-sm border-0">
-          <h5>Makkah Plant Total</h5>
-          <h3 id="makkahPlant">0</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card bg-secondary text-white p-3 shadow-sm border-0">
-          <h5>Jutt Plant Total</h5>
-          <h3 id="juttPlant">0</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card bg-dark text-white p-3 shadow-sm border-0">
-          <h5>Fuel Exp. Total</h5>
-          <h3 id="fuelExpense">Rs. 0</h3>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card bg-light text-dark p-3 shadow-sm border-0">
-          <h5>Other Exp. Total</h5>
-          <h3 id="otherPayments">Rs. 0</h3>
-        </div>
-      </div>
-    </div>
-
-    <!-- Part 2: Customer 30-Day Sheet Log (Customer Sheet Style) -->
-    <div class="card p-3 shadow-sm border-0 mb-5">
-      <h3 class="text-secondary fw-bold mb-3">Customer Supplies Matrix</h3>
-      <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-        <table class="table table-bordered matrix-table bg-white m-0">
-          <thead class="table-dark sticky-top">
-            <tr id="headerRow">
-              <th style="min-width:180px; text-align: left;">Customer Name</th>
-              <!-- Days D1 to D30 will populate here dynamically -->
-              <th class="total-column-bg">TOTAL BOTTLES</th>
-            </tr>
-          </thead>
-          <tbody id="matrixTableBody">
-            <!-- Customer rows will load here -->
-          </tbody>
-          <tfoot id="matrixFooter">
-            <!-- Daily total matching row will load here -->
-          </tfoot>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const API_BASE_URL = "/api";
-
-    // Authentication Guard
-    if (!localStorage.getItem('loggedInUser')) {
-      window.location.href = 'index.html';
-    }
-
-    function logout() {
-      localStorage.removeItem('loggedInUser');
-      window.location.href = 'index.html';
-    }
-
-    // Page Load Setup
-    document.addEventListener("DOMContentLoaded", () => {
-      buildMonthDropdown();
-      generateTableHeaders();
-      loadHistoryData();
-    });
-
-    // 1. Generate Dropdown for past 12 Months
-    function buildMonthDropdown() {
-      const select = document.getElementById("historyMonthSelect");
-      const current = new Date();
-      
-      for (let i = 1; i <= 12; i++) {
-        let d = new Date(current.getFullYear(), current.getMonth() - i, 1);
-        let monthValue = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0');
-        let monthText = d.toLocaleString('default', { month: 'long', year: 'numeric' });
-        
-        let opt = document.createElement("option");
-        opt.value = monthValue;
-        opt.text = monthText;
-        select.appendChild(opt);
-      }
-    }
-
-    // 2. Generate D1 to D30 Table Headers
-    function generateTableHeaders() {
-      const headerRow = document.getElementById("headerRow");
-      const totalTh = headerRow.children[1];
-      for (let d = 1; d <= 30; d++) {
-        let th = document.createElement('th');
-        th.innerText = 'D' + d;
-        th.className = 'day-col text-center';
-        th.style.minWidth = '50px';
-        headerRow.insertBefore(th, totalTh);
-      }
-    }
-
-    // 3. Main Data Fetch Trigger
-    async function loadHistoryData() {
-      const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
-      
-      try {
-        // Backend API parameters bhej rahe hain query string me query parameters ke saath
-        const response = await fetch(`${API_BASE_URL}/history?month=${selectedMonth}`);
-        if (!response.ok) throw new Error("History fetch failed");
-        
-        const archiveData = await response.json();
-        
-        renderAnalytics(archiveData.summary || {});
-        renderHistoryMatrix(archiveData.customers || []);
-      } catch (err) {
-        console.error("Error loading archives:", err);
-        // Fail hone par clear values
-        renderAnalytics({});
-        renderHistoryMatrix([]);
-      }
-    }
-
-    // 4. Render Top Dashboard Cards
-    function renderAnalytics(summary) {
-      document.getElementById("grandTotal").innerText = summary.totalSupply || 0;
-      document.getElementById("counterSales").innerText = "Rs. " + (summary.counterSale || 0);
-      document.getElementById("hamzaSupplier").innerText = summary.hamzaSupplier || 0;
-      document.getElementById("arsalanBhai").innerText = summary.arsalanBhai || 0;
-      document.getElementById("makkahPlant").innerText = summary.makkahPlant || 0;
-      document.getElementById("juttPlant").innerText = summary.juttPlant || 0;
-      document.getElementById("fuelExpense").innerText = "Rs. " + (summary.fuelExpense || 0);
-      document.getElementById("otherPayments").innerText = "Rs. " + (summary.otherPayments || 0);
-    }
-
-    // 5. Render History Customer Sheet Table Rows
-    function renderHistoryMatrix(customers) {
-      const tbody = document.getElementById("matrixTableBody");
-      const tfoot = document.getElementById("matrixFooter");
-      tbody.innerHTML = "";
-      tfoot.innerHTML = "";
-
-      if (customers.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="32" class="text-center text-muted py-4">No records found for this archived month.</td></tr>`;
-        return;
-      }
-
-      let dailyTotals = Array(32).fill(0); // 1 to 30 index tracking
-
-      customers.forEach(cust => {
-        let tr = document.createElement("tr");
-        let nameTd = document.createElement("td");
-        nameTd.className = "text-primary fw-bold";
-        nameTd.innerText = cust.name;
-        tr.appendChild(nameTd);
-
-        let customerRowTotal = 0;
-        let dataLog = cust.monthlyLogs || {};
-
-        for (let d = 1; d <= 30; d++) {
-          let td = document.createElement("td");
-          td.className = "text-center text-muted";
-          let val = dataLog[d] ? dataLog[d].totalSupply || 0 : 0;
-          td.innerText = val;
-          tr.appendChild(td);
-
-          customerRowTotal += val;
-          dailyTotals[d] += val;
+        // Authentication Guard
+        if (!localStorage.getItem('loggedInUser')) {
+            window.location.href = 'index.html';
         }
 
-        let totalTd = document.createElement("td");
-        totalTd.className = "fw-bold text-center text-dark bg-light";
-        totalTd.innerText = customerRowTotal;
-        tr.appendChild(totalTd);
-        tbody.appendChild(tr);
-      });
+        function logout() {
+            localStorage.removeItem('loggedInUser');
+            window.location.href = 'index.html';
+        }
 
-      // Footer Row generation for daily totals
-      let footTr = document.createElement("tr");
-      let footLabelTd = document.createElement("td");
-      footLabelTd.innerText = "Daily Total:";
-      footTr.appendChild(footLabelTd);
+        // Page Load Setup
+        document.addEventListener("DOMContentLoaded", () => {
+            buildMonthDropdown();
+            generateTableHeaders();
+            loadHistoryData();
+        });
 
-      let grandTotalSum = 0;
-      for (let d = 1; d <= 30; d++) {
-        let td = document.createElement("td");
-        td.className = "text-center";
-        td.innerText = dailyTotals[d];
-        footTr.appendChild(td);
-        grandTotalSum += dailyTotals[d];
-      }
+        // 1. Generate Dropdown for past 12 Months
+        function buildMonthDropdown() {
+            const select = document.getElementById("historyMonthSelect");
+            const current = new Date();
 
-      let finalTotalTd = document.createElement("td");
-      finalTotalTd.className = "text-center text-primary fs-5";
-      finalTotalTd.innerText = grandTotalSum;
-      footTr.appendChild(finalTotalTd);
-      tfoot.appendChild(footTr);
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            for (let i = 1; i <= 12; i++) {
+                let d = new Date(current.getFullYear(), current.getMonth() - i, 1);
+                let monthValue = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, '0');
+                let monthText = d.toLocaleString('default', { month: 'long', year: 'numeric' });
+
+                let opt = document.createElement("option");
+                opt.value = monthValue;
+                opt.text = monthText;
+                select.appendChild(opt);
+            }
+        }
+
+        // 2. Generate D1 to D30 Table Headers
+        function generateTableHeaders() {
+            const headerRow = document.getElementById("headerRow");
+            const totalTh = headerRow.children[1];
+            for (let d = 1; d <= 30; d++) {
+                let th = document.createElement('th');
+                th.innerText = 'D' + d;
+                th.className = 'day-col text-center';
+                th.style.minWidth = '50px';
+                headerRow.insertBefore(th, totalTh);
+            }
+        }
+
+        // 3. Main Data Fetch Trigger
+        async function loadHistoryData() {
+            const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
+
+            try {
+                // Backend API parameters bhej rahe hain query string me query parameters ke saath
+                const response = await fetch(`${API_BASE_URL}/history?month=${selectedMonth}`);
+                if (!response.ok) throw new Error("History fetch failed");
+
+                const archiveData = await response.json();
+
+                renderAnalytics(archiveData.summary || {});
+                renderHistoryMatrix(archiveData.customers || []);
+            } catch (err) {
+                console.error("Error loading archives:", err);
+                // Fail hone par clear values
+                renderAnalytics({});
+                renderHistoryMatrix([]);
+            }
+        }
+
+        function renderAnalytics(summary) {
+            document.getElementById("grandTotal").innerText = summary.totalSupply || 0;
+            // countersale ko counterSale (S capital) kar diya
+            document.getElementById("counterSales").innerText = "Rs. " + (summary.counterSale || 0);
+            document.getElementById("hamzaSupplier").innerText = summary.hamzaSupplier || 0;
+            document.getElementById("arsalanBhai").innerText = summary.arsalanBhai || 0;
+            document.getElementById("makkahPlant").innerText = summary.makkahPlant || 0;
+            document.getElementById("juttPlant").innerText = summary.juttPlant || 0;
+            document.getElementById("fuelExpense").innerText = "Rs. " + (summary.fuelExpense || 0);
+            document.getElementById("otherPayments").innerText = "Rs. " + (summary.otherPayments || 0);
+        }
+
+
+        // 5. Render History Customer Sheet Table Rows
+        function renderHistoryMatrix(customers) {
+            const tbody = document.getElementById("matrixTableBody");
+            const tfoot = document.getElementById("matrixFooter");
+            tbody.innerHTML = "";
+            tfoot.innerHTML = "";
+
+            if (customers.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="32" class="text-center text-muted py-4">No records found for this archived month.</td></tr>`;
+                return;
+            }
+
+            let dailyTotals = Array(32).fill(0); // 1 to 30 index tracking
+
+            customers.forEach(cust => {
+                let tr = document.createElement("tr");
+                let nameTd = document.createElement("td");
+                nameTd.className = "text-primary fw-bold";
+                nameTd.innerText = cust.name;
+                tr.appendChild(nameTd);
+
+                let customerRowTotal = 0;
+                let dataLog = cust.monthlyLogs || {};
+
+                for (let d = 1; d <= 30; d++) {
+                    let td = document.createElement("td");
+                    td.className = "text-center text-muted";
+                    let val = dataLog[d] ? dataLog[d].totalSupply || 0 : 0;
+                    td.innerText = val;
+                    tr.appendChild(td);
+
+                    customerRowTotal += val;
+                    dailyTotals[d] += val;
+                }
+
+                let totalTd = document.createElement("td");
+                totalTd.className = "fw-bold text-center text-dark bg-light";
+                totalTd.innerText = customerRowTotal;
+                tr.appendChild(totalTd);
+                tbody.appendChild(tr);
+            });
+
+            // Footer Row generation for daily totals
+            let footTr = document.createElement("tr");
+            let footLabelTd = document.createElement("td");
+            footLabelTd.innerText = "Daily Total:";
+            footTr.appendChild(footLabelTd);
+
+            let grandTotalSum = 0;
+            for (let d = 1; d <= 30; d++) {
+                let td = document.createElement("td");
+                td.className = "text-center";
+                td.innerText = dailyTotals[d];
+                footTr.appendChild(td);
+                grandTotalSum += dailyTotals[d];
+            }
+
+            let finalTotalTd = document.createElement("td");
+            finalTotalTd.className = "text-center text-primary fs-5";
+            finalTotalTd.innerText = grandTotalSum;
+            footTr.appendChild(finalTotalTd);
+            tfoot.appendChild(footTr);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 </body>
+
 </html>
