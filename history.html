@@ -212,16 +212,16 @@
             const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
 
             try {
-                // 🔽 Line 215 ko badal kar yeh likhein (ek baar /api hata dein)
                 const response = await fetch(`${API_BASE_URL}/history?month=${selectedMonth}`);
-
                 if (!response.ok) throw new Error("History fetch failed");
 
                 const archiveData = await response.json();
 
                 renderAnalytics(archiveData.summary || {});
                 renderHistoryMatrix(archiveData.customers || []);
-            } catch (err) {
+            }
+
+            catch (err) {
                 console.error("Error loading archives:", err);
                 // Fail hone par clear values
                 renderAnalytics({});
