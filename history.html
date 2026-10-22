@@ -170,18 +170,12 @@
             localStorage.removeItem('loggedInUser');
             window.location.href = 'index.html';
         }
+        // ✅ Line 173 se 183 tak ka poora block hata kar sirf yeh likhein:
         document.addEventListener("DOMContentLoaded", () => {
             buildMonthDropdown();
-            generateTableHeaders();
-            loadHistoryData();
-            // Yeh automatic current month aur year (Jaise: October 2026) heading me daal dega
-            const currentOptions = { month: 'long', year: 'numeric' };
-            const formattedMonth = new Date().toLocaleDateString('default', currentOptions);
-            const headingElem = document.getElementById("currentLiveMonthHeading");
-            if (headingElem) {
-                headingElem.innerText = formattedMonth;
-            }
+            loadHistoryData(); // Page load hote hi data fetch chalayega
         });
+
         function buildMonthDropdown() {
             const select = document.getElementById("historyMonthSelect");
             const current = new Date();
@@ -271,31 +265,33 @@
             renderHistoryTableGrid(historyDaysArray);
         }
 
-        // 6. Monthly Log Chart grid table render karne ka solid read-only function
+        // ✅ Line 274 se 300 ki jagah yeh perfect layout code lagayein:
         function renderHistoryTableGrid(daysData) {
-
+            // Sahi HTML ID matrixTableBody ko target karna
+            const targetBody = document.getElementById('matrixTableBody');
+            if (!targetBody) return;
 
             let tableRowsHtml = '';
 
             for (let day = 1; day <= 31; day++) {
                 const dData = daysData[day] || {};
 
-                // Data fields badalne ke bajay read-only cells me clean text display karna
                 tableRowsHtml += `<tr>
-            <td><b>Day ${day}</b></td>
+            <td class="fw-bold text-center bg-light">Day ${day}</td>
             <td class="text-success fw-bold text-center">${dData.counterSale || 0}</td>
-            <td class="text-center">${dData.hamzaSupplier || 0}</td>
-            <td class="text-center">${dData.arsalanBhai || 0}</td>
-            <td class="text-center">${dData.makkahPlant || 0}</td>
-            <td class="text-center">${dData.juttPlant || 0}</td>
+            <td class="text-center" style="color: #1c3d73; font-weight: bold;">${dData.hamzaSupplier || 0}</td>
+            <td class="text-center" style="color: #3fa2f6; font-weight: bold;">${dData.arsalanBhai || 0}</td>
+            <td class="text-center" style="color: #ff3344; font-weight: bold;">${dData.makkahPlant || 0}</td>
+            <td class="text-center" style="color: #ffc107; font-weight: bold;">${dData.juttPlant || 0}</td>
             <td class="text-primary fw-bold text-center">${dData.totalSupply || dData.total_supply || 0}</td>
             <td class="text-danger fw-bold text-center">${dData.borrowBottles || 0}</td>
-            <td class="text-secondary text-center">${dData.fuelExpense || 0}</td>
-            <td class="text-dark text-center">${dData.otherPayments || 0}</td>
-           </tr>`;
+            <td class="text-secondary text-center fw-bold">${dData.fuelExpense || 0}</td>
+            <td class="text-dark text-center fw-bold">${dData.otherPayments || 0}</td>
+        </tr>`;
             }
 
-            tableBody.innerHTML = tableRowsHtml;
+            // Sahi matching property target string pass karna
+            targetBody.innerHTML = tableRowsHtml;
         }
 
 
