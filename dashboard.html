@@ -150,33 +150,11 @@
         </div>
     </div>
     <script>
+        const API_BASE_URL = "/api";
         let clientDataArray = {};
         let currentTrackingDate = new Date();
 
-        function updateMonthDisplay() {
-            const options = { month: 'long', year: 'numeric' };
-            const formattedMonth = currentTrackingDate.toLocaleDateString('default', options);
-
-            const headingElem = document.getElementById("currentLiveMonthHeading");
-            if (headingElem) {
-                headingElem.innerText = formattedMonth;
-            }
-            loadDataFromMongoDB(); // Slider dabne par data load function ko dobara chalayega
-        }
-
-        function navigateMonth(direction) {
-            currentTrackingDate.setMonth(currentTrackingDate.getMonth() + direction);
-            updateMonthDisplay();
-        }
-
-        // 1. Global Date State Setup (Taki pata rahe user kis month par khada hai)
-        // 2. DOMContentLoaded listener ke andar ka code update karein
-        document.addEventListener("DOMContentLoaded", () => {
-            // Page load hote hi current system month ka data display aur fetch karein
-            updateMonthDisplay();
-        });
-
-        // 3. Month Text aur Heading ko dynamically update karne ka function
+        // 1. Month Text aur Heading ko dynamically update karne ka function
         function updateMonthDisplay() {
             const options = { month: 'long', year: 'numeric' };
             const formattedMonth = currentTrackingDate.toLocaleDateString('default', options);
@@ -187,55 +165,57 @@
                 headingElem.innerText = formattedMonth;
             }
 
-            // 💡 Backend se us selected month ka query URL taiyar karein (Format: YYYY-MM)
-            const year = currentTrackingDate.getFullYear();
-            const month = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
-            const targetMonthParam = `${year}-${month}`;
-
-            // Naye selected mahine ka data database se load karne ke liye call karein
-            fetchLogsForSelectedMonth(targetMonthParam);
+            // Backend function ko call karein jo data load karegi
+            loadDataFromMongoDB();
         }
 
-        // 4. Slider ke (<) aur (>) buttons ka logic
+        // 2. Slider ke (<) aur (>) buttons ka logic
         function navigateMonth(direction) {
-            // direction = -1 matlab pichla mahina, direction = 1 matlab agla mahina
             currentTrackingDate.setMonth(currentTrackingDate.getMonth() + direction);
-
-            // Display aur data reload trigger karein
             updateMonthDisplay();
         }
 
-        // 5. Safe dynamic database data fetching logic
-        async function fetchLogsForSelectedMonth(monthYearString) {
+        // 3. Page load hote hi function chalane ke liye listener
+        document.addEventListener("DOMContentLoaded", () => {
+            updateMonthDisplay();
+        });
+
+
+        // ✅ 1. Safe dynamic database data fetching logic (Merged & Cleaned)
+        async function loadDataFromMongoDB() {
             try {
-                // Backend ko batayein ki kis specific month ka data chahiye
-                const response = await fetch(`${API_BASE_URL}/logs?month=${monthYearString}`);
+                const year = currentTrackingDate.getFullYear();
+                const monthStr = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
+                const targetMonth = `${year}-${monthStr}`;
+
+                // Dynamic URL fetch request target month filter ke sath
+                const response = await fetch(`${API_BASE_URL}/logs?month=${targetMonth}`);
                 let mongoData = await response.json();
+
+                // 🚨 Naye mahine par data blank (0) karne ke liye memory array saaf karein
+                resetClientDataArrayToZero();
 
                 if (!Array.isArray(mongoData)) {
                     mongoData = [];
                 }
 
-                // Live Grid input data memory array ko pehle khali default/0 set karein
-                // (Taki naye ya empty month par purana data overlap na kare)
-                resetClientDataArrayToZero();
-
-                // Receive hua data array map karein
+                // Database se mila hua data cells me map karna
                 mongoData.forEach(item => {
                     if (item && item.day && clientDataArray[item.day]) {
                         clientDataArray[item.day] = item;
                     }
                 });
 
-                // Dashboard components ko refresh karein
+                // Grid UI render update trigger
                 renderTableStructure();
 
-            } catch (error) {
-                console.error("Failed to navigate/load month data:", error);
+            } catch (err) {
+                console.error("Cloud load failed, using local grid layout:", err);
+                renderTableStructure();
             }
         }
 
-        // 6. Helper: Data table memory helper grid reset function
+        // ✅ 2. Helper: Data table memory helper grid reset function
         function resetClientDataArrayToZero() {
             for (let day = 1; day <= 31; day++) {
                 clientDataArray[day] = {
@@ -253,8 +233,7 @@
             }
         }
 
-        const API_BASE_URL = "/api";
-
+        // ✅ 3. User Authentication & Profile UI Logic
         const activeUser = localStorage.getItem('loggedInUser') || "Authorized User";
         document.getElementById('userLabel').innerText = activeUser;
 
@@ -270,51 +249,8 @@
         const tbody = document.getElementById('matrixTableBody');
         const currentDayNum = new Date().getDate();
 
-
-
-        // Empty structure initialize karein
-        for (let d = 1; d <= 31; d++) {
-            clientDataArray[d] = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
-        }
-        async function loadDataFromMongoDB() {
-            try {
-                const year = currentTrackingDate.getFullYear();
-                const monthStr = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
-                const targetMonth = `${year}-${monthStr}`;
-
-                // Dynamic URL fetch request target month filter ke sath
-                const response = await fetch(`${API_BASE_URL}/logs?month=${targetMonth}`);
-                let mongoData = await response.json();
-
-                // 🚨 IMPORTANT: Naye mahine par data blank (0) karne ke liye pehle memory array saaf karein
-                for (let d = 1; d <= 31; d++) {
-                    clientDataArray[d] = {
-                        counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0,
-                        juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0
-                    };
-                }
-
-                if (!Array.isArray(mongoData)) {
-                    mongoData = [];
-                }
-
-                // Database se mila hua data cells me map karna
-                mongoData.forEach(item => {
-                    if (item && item.day && clientDataArray[item.day]) {
-                        clientDataArray[item.day] = item;
-                    }
-                });
-
-                // Grid ui render update trigger
-                renderTableStructure();
-
-            } catch (err) {
-                console.error("Cloud load failed, using local grid layout:", err);
-                renderTableStructure();
-            }
-        }
-
-
+        // ✅ 4. Initial Empty structure generation
+        resetClientDataArrayToZero();
 
         function renderTableStructure() {
             let tableRowsHtml = '';
@@ -330,7 +266,7 @@
                     <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
                     <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
                     <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
-                    <td> <input type="number"id="row-total-supply-${day}" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}"placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
+                    <td><input type="number" id="row-total-supply-${day}" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
                     <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
                     <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
                     <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
@@ -338,55 +274,50 @@
             }
             tbody.innerHTML = tableRowsHtml;
             calculateTopAnalytics();
-
         }
 
         async function sendUpdateToBackend(day, field, value) {
-            // Pehle local array update karein aur display chalayein (Taake card 0 na ho)
+            // Local state ko fauran update karein taake dashboard bina delay ke response kare
             if (!clientDataArray[day]) {
                 clientDataArray[day] = {};
             }
             clientDataArray[day][field] = Number(value) || 0;
 
-            // Live update card bina server dependence ke
+            // Live analytics recalculate karein
             calculateTopAnalytics();
 
             try {
-                const response = await fetch(`${API_BASE_URL}/logs/update`, {
+                // Target month format nikalna (e.g., "2026-11")
+                const year = currentTrackingDate.getFullYear();
+                const monthStr = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
+                const targetMonth = `${year}-${monthStr}`;
 
+                // Sahi single fetch request month filter ke sath
+                const response = await fetch(`${API_BASE_URL}/logs/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ day, field, value })
+                    body: JSON.stringify({
+                        month: targetMonth,
+                        day,
+                        field,
+                        value
+                    })
                 });
 
                 if (!response.ok) {
-                    console.warn("Server responded with an error, but local state is updated.");
+                    console.warn("Server side par save failed, par local state chal rahi hai.");
                 }
             } catch (err) {
-                console.error("Cloud syncing failed, but local data works:", err);
+                console.error("Cloud synchronization broke:", err);
             }
-            // Line 323 ke paas body: JSON.stringify wale hisse ko update karein:
-            const year = currentTrackingDate.getFullYear();
-            const monthStr = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
-            const targetMonth = `${year}-${monthStr}`;
-
-            const response = await fetch(`${API_BASE_URL}/logs/update`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    month: targetMonth, // 👈 Yeh line zaroori hai database filter ke liye
-                    day,
-                    field,
-                    value
-                })
-            });
-
         }
+
+        // Analytics calculation helper function
         function calculateTopAnalytics() {
             let sums = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
+
             for (let day = 1; day <= 31; day++) {
+                if (!clientDataArray[day]) continue;
                 sums.counterSale += (clientDataArray[day].counterSale || 0);
                 sums.hamzaSupplier += (clientDataArray[day].hamzaSupplier || 0);
                 sums.arsalanBhai += (clientDataArray[day].arsalanBhai || 0);
@@ -399,6 +330,7 @@
                 let dayTotal = clientDataArray[day].totalSupply || clientDataArray[day].total_supply || 0;
                 sums.totalSupply += (+dayTotal || 0);
             }
+
             document.getElementById('statsSales').innerText = "Rs. " + sums.counterSale.toLocaleString();
             document.getElementById('statWeeklyBottles').innerText = sums.totalSupply.toLocaleString();
             document.getElementById('statBorrow').innerText = sums.borrowBottles.toLocaleString();
@@ -409,8 +341,11 @@
             document.getElementById('cardFuelExpense').innerText = "Rs. " + sums.fuelExpense.toLocaleString();
             document.getElementById('cardOtherPayments').innerText = "Rs. " + sums.otherPayments.toLocaleString();
         }
+
+        // Initial launch load call
         loadDataFromMongoDB();
     </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
