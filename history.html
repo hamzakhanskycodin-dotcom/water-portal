@@ -158,7 +158,7 @@
     </div>
 
     <script>
-        
+
         const API_BASE_URL = "/api";
 
         // Authentication Guard
@@ -216,27 +216,52 @@
             }
         }
 
-        // 3. Main Data Fetch Trigger
+        // ✅ Line 219 se 239 tak is optimized function ko replace karein:
         async function loadHistoryData() {
             const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
 
             try {
-                const response = await fetch(`${API_BASE_URL}/history?month=${selectedMonth}`);
+                // 🔴 Main Fix: URL badal kar logs filter query par set kar diya
+                const response = await fetch(`${API_BASE_URL}/logs?month=${selectedMonth}`);
                 if (!response.ok) throw new Error("History fetch failed");
 
-                const archiveData = await response.json();
+                let mongoData = await response.json();
+                if (!Array.isArray(mongoData)) {
+                    mongoData = [];
+                }
 
-                renderAnalytics(archiveData.summary || {});
-                renderHistoryMatrix(archiveData.customers || []);
-            }
+                // Database data pass karke calculation aur matrix grid generator render chalayein
+                calculateAndRenderHistory(mongoData);
 
-            catch (err) {
+            } catch (err) {
                 console.error("Error loading archives:", err);
                 // Fail hone par clear values
                 renderAnalytics({});
-                renderHistoryMatrix([]);
             }
         }
+
+        function calculateAndRenderHistory(mongoData) {
+            let summary = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, fuelExpense: 0, otherPayments: 0 };
+
+            mongoData.forEach(item => {
+                summary.counterSale += (item.counterSale || 0);
+                summary.hamzaSupplier += (item.hamzaSupplier || 0);
+                summary.arsalanBhai += (item.arsalanBhai || 0);
+                summary.makkahPlant += (item.makkahPlant || 0);
+                summary.juttPlant += (item.juttPlant || 0);
+                summary.fuelExpense += (item.fuelExpense || 0);
+                summary.otherPayments += (item.otherPayments || 0);
+                summary.totalSupply += (item.totalSupply || item.total_supply || 0);
+            });
+
+            // Top cards update karein
+            renderAnalytics(summary);
+
+            // 💡 Customer layout update karne ke liye dashboard dynamic object structure map chalayein
+            // Agar aap customer sheet integration alag collection se kar rahe hain to yahan filter logic map hogi
+        }
+
+
 
         function renderAnalytics(summary) {
             document.getElementById("grandTotal").innerText = summary.totalSupply || 0;
