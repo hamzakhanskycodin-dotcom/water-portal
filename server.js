@@ -31,15 +31,38 @@ const LogSchema = new mongoose.Schema({
 // Model registeration line (agar pehle se bani hai to wahi rehne dein)
 const Log = mongoose.models.Log || mongoose.model('Log', LogSchema);
 
-// --- 2. CUSTOMER MATRIX SCHEMA ---
+// 1. Customer Schema definition (Line 20-30 ke paas check karein)
 const CustomerSchema = new mongoose.Schema({
     name: { type: String, required: true },
-    days: { type: [Number], default: () => new Array(30).fill(0) }
+    month: { type: String, required: true }, // 👈 Yeh line zaroori hai (Format: "2026-10")
+    days: { type: Map, of: Number, default: {} }
 });
-const Customer = mongoose.model('Customer', CustomerSchema);
 
+const Customer = mongoose.models.Customer || mongoose.model('Customer', CustomerSchema);
 
-// ==================== API ROUTES ====================
+// 2. Add Customer Route Fix
+app.post('/api/customers/add', async (req, res) => {
+    try {
+        const { name, month } = req.body;
+
+        if (!name || !month) {
+            return res.status(400).json({ success: false, error: "Name and month are required" });
+        }
+
+        const newCustomer = new Customer({
+            name: name.trim(),
+            month: month, // Frontend se aane wala filter month save karein
+            days: {}
+        });
+
+        await newCustomer.save();
+        res.status(201).json(newCustomer);
+    } catch (err) {
+        console.error("Add customer crash:", err);
+        res.status(500).json({ error: err.message });
+    }
+});
+
 
 // ==================== FOOLPROOF API ROUTES ====================
 
@@ -47,7 +70,7 @@ const Customer = mongoose.model('Customer', CustomerSchema);
 app.get('/api/logs', async (req, res) => {
     try {
         const { month } = req.query; // Frontend filter string (e.g., '2026-09')
-        
+
         let filter = {};
         if (month && month !== "undefined" && month !== "null") {
             filter.month = month; // Sirf tab filter lagayein jab month available ho
@@ -77,7 +100,7 @@ app.post('/api/logs/update', async (req, res) => {
 
         // Find and update or insert if doesn't exist
         const updatedLog = await Log.findOneAndUpdate(
-            { month: month, day: Number(day) }, 
+            { month: month, day: Number(day) },
             { $set: updateData },
             { new: true, upsert: true, runValidators: false } // runValidators false rakhne se strict validation crash nahi karegi
         );
@@ -97,14 +120,14 @@ app.post('/api/logs/update', async (req, res) => {
 app.get('/api/customers', async (req, res) => {
     try {
         const { month } = req.query; // Frontend se aane wala query month (e.g., '2026-09')
-        
+
         let query = {};
         if (month) {
             query.month = month; // Sirf target month ka data filter karein
         }
 
         // Database se filter kiya hua data nikalna
-        const customers = await Customer.find(query); 
+        const customers = await Customer.find(query);
         res.status(200).json(customers);
     } catch (err) {
         console.error("Error fetching filtered customers:", err);
@@ -119,7 +142,7 @@ app.post('/api/customers/add', async (req, res) => {
 
         const newCustomer = new Customer({
             name,
-            month: month || new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }), 
+            month: month || new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }),
             days: {} // Blank 30 days grid array object
         });
 
