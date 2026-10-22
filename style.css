@@ -295,6 +295,30 @@
          font-size: 11px !important;
          line-height: 1.2 !important;
      }
+
+     .month-slider-wrapper {
+         display: flex !important;
+         justify-content: space-between !important;
+         align-items: center !important;
+         width: 100% !important;
+         max-width: 480px !important;
+         margin: 0 auto !important;
+         padding: 0 4px !important;
+         box-sizing: border-box !important;
+     }
+
+     .slider-month-text {
+         font-size: 22px !important;
+         font-weight: bold !important;
+         text-align: center !important;
+         flex-grow: 1 !important;
+         white-space: nowrap !important;
+     }
+
+     .slider-nav-btn {
+         min-width: 80px !important;
+         white-space: nowrap !important;
+     }
  }
 
 
