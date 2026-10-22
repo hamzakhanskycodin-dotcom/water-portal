@@ -63,9 +63,10 @@
 </head>
 
 <body class="bg-light">
-     <nav class="navbar navbar-expand-lg  shadow-sm">
-          <div class="container">
-            <span class="navbar-brand fw-bold text-wrap m-0" style="font-size: 20px; max-width: 50%;">Monthly Customer Supplies Sheet</span>
+    <nav class="navbar navbar-expand-lg  shadow-sm">
+        <div class="container">
+            <span class="navbar-brand fw-bold text-wrap m-0" style="font-size: 20px; max-width: 50%;">Monthly Customer
+                Supplies Sheet</span>
 
 
             <div class="d-flex align-items-center gap-2">
@@ -77,9 +78,17 @@
     <div class="container py-4  ">
         <div class="card p-2 p-md-4 shadow-sm border-0">
             <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-3">
-                <h5 class="fw-bold m-0">30 Days Costumers Entry Sheet</h5>
+                <h3 class="fw-bold m-0">30 Days Customers Entry Sheet</h3>
+                <div class="d-flex align-items-center gap-3 bg-secondary px-3 py-1 rounded shadow-sm">
+                    <button class="btn btn-sm btn-light fw-bold py-0" onclick="navigateCustomerMonth(-1)">&lt;</button>
+                    <span id="customerMonthHeading" class="text-white fw-bold font-monospace"
+                        style="min-width: 140px; text-align: center; display: inline-block;">-</span>
+                    <button class="btn btn-sm btn-light fw-bold py-0" onclick="navigateCustomerMonth(1)">&gt;</button>
+                </div>
+
                 <button onclick="addNewCustomer()" class="btn btn-success fw-bold">+ Add New Customer</button>
             </div>
+
 
             <div class="table-responsive" style="max-height: 600px; overflow-y: auto;">
                 <table class="table table-bordered matrix-table bg-white m-0">
@@ -114,33 +123,58 @@
             headerRow.insertBefore(th, totalTh);
         }
 
+        // Global Date State for Customer Sheet
+        let customerTrackingDate = new Date();
+
+        function updateCustomerMonthDisplay() {
+            const options = { month: 'long', year: 'numeric' };
+            const formattedMonth = customerTrackingDate.toLocaleDateString('default', options);
+
+            const headingElem = document.getElementById("customerMonthHeading");
+            if (headingElem) {
+                headingElem.innerText = formattedMonth;
+            }
+            loadCustomers(); // Mahina badalne par data dobara fetch karega
+        }
+
+        function navigateCustomerMonth(direction) {
+            customerTrackingDate.setMonth(customerTrackingDate.getMonth() + direction);
+            updateCustomerMonthDisplay();
+        }
+
+
+
+
         let customersData = [];
 
         async function loadCustomers() {
             try {
+                // Format: YYYY-MM (e.g., "2026-10")
+                const year = customerTrackingDate.getFullYear();
+                const monthStr = String(customerTrackingDate.getMonth() + 1).padStart(2, '0');
+                const targetMonth = `${year}-${monthStr}`;
 
-                const response = await fetch(`${API_BASE_URL}/customers`);
-
-                // Agar server error de (like 500), to catch block me bhej dein
+                // 🔴 Main API URL dynamic fetch month parameter ke sath
+                const response = await fetch(`${API_BASE_URL}/customers?month=${targetMonth}`);
                 if (!response.ok) throw new Error('Server returned an error');
 
                 const data = await response.json();
 
-                // Ensure karein ke jo data aaya hai wo sach me ek Array hi hai
                 if (Array.isArray(data)) {
                     customersData = data;
                     renderMatrix();
                 } else {
                     console.error("Data array nahi hai:", data);
-                    customersData = []; // Khali array set krdein taake crash na ho
+                    customersData = [];
                     renderMatrix();
                 }
             } catch (err) {
                 console.error("Error fetching customers from database:", err);
-                customersData = []; // Fallback empty array
+                customersData = [];
                 renderMatrix();
             }
         }
+
 
 
         function renderMatrix() {
@@ -241,7 +275,7 @@
             }
         }
 
-        loadCustomers();
+        updateCustomerMonthDisplay();
     </script>
 </body>
 
