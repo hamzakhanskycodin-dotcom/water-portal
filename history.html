@@ -342,50 +342,9 @@
             document.getElementById("juttPlant").innerText = summary.juttPlant || 0;
             document.getElementById("fuelExpense").innerText = "Rs. " + (summary.fuelExpense || 0);
             document.getElementById("otherPayments").innerText = "Rs. " + (summary.otherPayments || 0);
-        }
-
-
-        function renderHistoryMatrix(customers) {
-            // HTML Elements ki sahi selectors mapping
-            const headerRow = document.getElementById("headerRow") || document.querySelector("#historyCustomerTable thead tr") || document.querySelector(".table-dark tr");
-            const tbody = document.getElementById("matrixTableBody");
-            const tfoot = document.getElementById("matrixFooter");
-
-            if (!tbody) return;
-
-            // ✅ Line 356 se Line 375 tak ka kachra saaf karke sirf itna rakhein:
-            if (tbody) tbody.innerHTML = '';
-            if (tfoot) tfoot.innerHTML = '';
-
-            // 2. Empty check list validation
-            if (!customers || customers.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="31" class="text-center text-muted py-4">No customer logs archived found for this month.</td></tr>`;
-                return;
-            }
-
-            // 3. Customers ki horizontal rows generate karein
-            let tableRowsHtml = '';
-            customers.forEach(cust => {
-                tableRowsHtml += `<tr>
-            <td class="fw-bold text-primary bg-light" style="position: sticky; left: 0; z-index: 1;">${cust.name || 'Unnamed Customer'}</td>`;
-
-                // Day 1 se Day 30 tak loop se horizontal entries fill karein
-                for (let d = 1; d <= 30; d++) {
-                    // Aapke schema structure ke mutabiq object query path check
-                    const datalog = cust.monthlyLogs || cust.days || {};
-                    const val = (datalog[d] && datalog[d].totalSupply) ? datalog[d].totalSupply : (datalog[d] || 0);
-
-                    const cellClass = val > 0 ? 'text-success fw-bold text-center' : 'text-center text-muted';
-                    tableRowsHtml += `<td class="${cellClass}">${val}</td>`;
-                }
-
-                tableRowsHtml += `</tr>`;
-            });
-
-            tbody.innerHTML = tableRowsHtml;
-        }
-
-
+            document.getElementById('cardFuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
+            document.getElementById('cardOtherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
+        } 
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
