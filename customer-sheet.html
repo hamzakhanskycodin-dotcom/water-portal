@@ -221,15 +221,20 @@
                 let rowTotal = 0;
                 let cellsHtml = '';
 
-                for (let d = 0; d < 30; d++) {
-                    let val = cust.days[d] || 0;
-                    rowTotal += val;
+                for (let d = 1; d <= 30; d++) {
+                    // Safe key value lookup handle for Mongoose maps vs json objects
+                    let val = 0;
+                    if (cust.days) {
+                        val = typeof cust.days.get === 'function' ? (cust.days.get(String(d)) || 0) : (cust.days[d] || 0);
+                    }
+                    rowTotal += Number(val) || 0;
+
                     cellsHtml += `<td>
-                        <input type="number" class="matrix-input" 
-                               value="${val || ''}" placeholder="0" min="0" 
-                               onfocus="if(this.value=='0') this.value='';"
-                               onchange="updateBottleCount('${cust._id}', ${custIdx}, ${d}, this.value)">
-                    </td>`;
+            <input type="number" class="matrix-input text-center" 
+                   value="${val || 0}" min="0"
+                   onfocus="if(this.value=='0') this.value=''"
+                   onchange="updateBottleCount('${cust._id}', ${custIdx}, ${d}, this.value)">
+        </td>`;
                 }
 
                 html += `<tr>
@@ -270,45 +275,79 @@
         }
 
 
-        async function updateBottleCount(dbId, custIdx, dayIdx, value) {
+        // ✅ Line 192 ke paas updateBottleCount function ko is se replace karein:
+        async function updateBottleCount(dbid, custIdx, dayIdx, value) {
             const numVal = Number(value) || 0;
-            customersData[custIdx].days[dayIdx] = numVal;
 
-            // Fast interface update before network response ends
-            let newRowTotal = customersData[custIdx].days.reduce((a, b) => a + b, 0);
-            document.getElementById(`total-cust-${custIdx}`).innerText = newRowTotal;
+            // Local data structure state safe update
+            if (!customersData[custIdx].days) {
+                customersData[custIdx].days = {};
+            }
+
+            // Map/Object properties setting rule
+            if (typeof customersData[custIdx].days.set === 'function') {
+                customersData[custIdx].days.set(String(dayIdx), numVal);
+            } else {
+                customersData[custIdx].days[dayIdx] = numVal;
+            }
+
+            // 🔴 CRITICAL TOTALS FIX: .reduce() hata kar Object.values() se total nikalna
+            let newRowTotal = 0;
+            const daysObj = customersData[custIdx].days;
+
+            if (daysObj) {
+                // Agar days Mongoose Map hai ya normal Object, dono surton me safe calculation:
+                const valuesArray = typeof daysObj.values === 'function' ? Array.from(daysObj.values()) : Object.values(daysObj);
+                valuesArray.forEach(v => { newRowTotal += (Number(v) || 0); });
+            }
+
+            // Live display label interface updates without lag
+            const totalLabel = document.getElementById(`total-cust-${dbid}`);
+            if (totalLabel) totalLabel.innerText = newRowTotal;
+
+            // Bottom columns total trigger
             renderColumnTotals();
 
             try {
                 await fetch(`${API_BASE_URL}/customers/update`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id: dbId, dayIdx, value: numVal })
+                    body: JSON.stringify({ id: dbid, dayIdx, value: numVal })
                 });
-            } catch (err) { console.error("Error updating bottle count:", err); }
+            } catch (err) {
+                console.error("Error updating bottle count in cloud:", err);
+            }
         }
 
+
+        
         function renderColumnTotals() {
             const footer = document.getElementById('matrixFooter');
-            if (customersData.length === 0) return;
+            if (!footer || customersData.length === 0) return;
 
-            let dayTotals = new Array(30).fill(0);
+            let dayTotals = Array(31).fill(0);
             let grandTotal = 0;
 
             customersData.forEach(cust => {
-                for (let d = 0; d < 30; d++) {
-                    let val = cust.days[d] || 0;
-                    dayTotals[d] += val;
-                    grandTotal += val;
+                for (let d = 1; d <= 30; d++) {
+                    let val = 0;
+                    if (cust.days) {
+                        val = typeof cust.days.get === 'function' ? (cust.days.get(String(d)) || 0) : (cust.days[d] || 0);
+                    }
+                    dayTotals[d] += Number(val) || 0;
+                    grandTotal += Number(val) || 0;
                 }
             });
 
-            let footerHtml = `<tr class="table-secondary"><td class="text-start text-dark fw-bold">Daily Total:</td>`;
-            dayTotals.forEach(sum => { footerHtml += `<td class="fw-bold text-dark">${sum}</td>`; });
-            footerHtml += `<td class="bg-dark text-warning fw-bold fs-6">${grandTotal}</td><td></td></tr>`;
+            let footerHtml = `<tr class="table-secondary"><td class="fw-bold text-center">Daily Total:</td>`;
+            for (let d = 1; d <= 30; d++) {
+                footerHtml += `<td class="text-center fw-bold">${dayTotals[d]}</td>`;
+            }
+            footerHtml += `<td class="bg-dark text-warning fw-bold text-center fs-6">${grandTotal}</td></tr>`;
 
             footer.innerHTML = footerHtml;
         }
+
 
         async function deleteCustomer(dbId, name) {
             if (confirm(`Kya aap "${name}" ko list se nikalna chahte hain?`)) {
