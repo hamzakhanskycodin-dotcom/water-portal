@@ -134,51 +134,27 @@
             </div>
         </div>
 
-        <!-- Part 2: Customer 30-Day Sheet Log (Customer Sheet Style) -->
-        <div class="card p-3 shadow-sm border-0 mb-5">
-            <h3 class="text-secondary fw-bold mb-3">Customer Supplies Matrix</h3>
-            <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
-                <table class="table table-bordered matrix-table bg-white m-0">
-                    <thead class="table-dark sticky-top">
-                        <tr id="headerRow">
-                            <th class="bg-dark text-white text-center"
-                                style="min-width: 120px; vertical-align: middle;">DATE</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #198754; vertical-align: middle;">COUNTER
-                                SALE</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #1c3d73; vertical-align: middle;">HAMZA
-                                SUPPLIER</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #3fa2f6; vertical-align: middle;">ARSALAN
-                                BHAI</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #ff3344; vertical-align: middle;">MAKKAH
-                                PLANT</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #ffc107; color: black !important; vertical-align: middle;">
-                                JUTT PLANT</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #0d6efd; vertical-align: middle;">TOTAL
-                                SUPPLY</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #dc3545; vertical-align: middle;">BORROW
-                                BOTTLES</th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #6c757d; vertical-align: middle;">FUEL EXP.
-                            </th>
-                            <th class="text-white text-center fw-bold"
-                                style="min-width: 140px; background-color: #212529; vertical-align: middle;">OTHER EXP.
-                            </th>
-                        </tr>
 
+        <div class="card p-3 shadow-sm border-0 mb-5">
+            <div class="table-responsive" style="max-height: 650px; overflow-y: auto;">
+                <table class="table table-bordered table-hover matrix-table bg-white m-0">
+                    <thead class="table-dark" style="position: sticky; top:0; z-index: 10;">
+                        <tr>
+                            <th style="width: 100px;">DATE</th>
+                            <th class="bg-success">COUNTER SALE</th>
+                            <th style="background-color: #1d2b64;">HAMZA SUPPLIER</th>
+                            <th style="background-color: #4facfe;">ARSALAN BHAI</th>
+                            <th style="background-color: #ff4b5c;">MAKKAH PLANT</th>
+                            <th style="background-color: #ffb400;">JUTT PLANT</th>
+                            <th style="background-color: #0d6efd;">TOTAL SUPPLY</th>
+                            <th style="background-color: #dc3545;">BORROW BOTTLES</th>
+                            <th style="background-color: #6c757d;">FUEL EXP.</th>
+                            <th style="background-color: #212529 ;">OTHER EXP.</th>
+                        </tr>
                     </thead>
-                    <tbody id="matrixTableBody">
-                        <!-- Customer rows will load here -->
-                    </tbody>
-                    <tfoot id="matrixFooter">
-                        <!-- Daily total matching row will load here -->
-                    </tfoot>
+                    <tbody id="matrixTableBody"></tbody>
+
+                    <tfoot id="matrixFooter"> </tfoot>
                 </table>
             </div>
         </div>
@@ -230,7 +206,18 @@
             }
         }
 
-     
+        // // 2. Generate D1 to D30 Table Headers
+        // function generateTableHeaders() {
+        //     const headerRow = document.getElementById("headerRow");
+        //     const totalTh = headerRow.children[1];
+        //     for (let d = 1; d <= 30; d++) {
+        //         let th = document.createElement('th');
+        //         th.innerText = 'D' + d;
+        //         th.className = 'day-col text-center';
+        //         th.style.minWidth = '50px';
+        //         headerRow.insertBefore(th, totalTh);
+        //     }
+        // }
 
         // ✅ Line 219 se 239 tak is optimized function ko replace karein:
         async function loadHistoryData() {
@@ -291,9 +278,7 @@
 
         // 6. Monthly Log Chart grid table render karne ka solid read-only function
         function renderHistoryTableGrid(daysData) {
-            // Apni HTML table body ki ID check karein (Aam taur par matrixTableBody ya logsTableBody hoti hai)
-            const tableBody = document.getElementById('matrixTableBody') || document.getElementById('logsTableBody');
-            if (!tableBody) return;
+            const tbody = document.getElementById('matrixTableBody');
 
             let tableRowsHtml = '';
 
