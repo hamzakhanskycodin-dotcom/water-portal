@@ -272,7 +272,32 @@
          background-color: #e9ecef !important;
      }
 
+     /* Main wrapper compression spacing constraints adjustment */
+     .month-slider-wrapper {
+         gap: 4px !important;
+         padding-left: 2px !important;
+         padding-right: 2px !important;
+     }
+
+     /* October 2026 font scaling to prevent grid splitting */
+     .slider-month-text {
+         font-size: 15px !important;
+         min-width: auto !important;
+         padding: 0 2px !important;
+     }
+
+     /* Buttons auto text compression layout lock */
+     .slider-nav-btn {
+         min-width: 65px !important;
+         /* Tight constraints box adjustment */
+         max-width: 70px !important;
+         padding: 4px 6px !important;
+         font-size: 11px !important;
+         line-height: 1.2 !important;
+     }
  }
+
+
 
 
 
