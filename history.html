@@ -9,6 +9,7 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
     <style>
         /* Mobile standard freeze columns for History Sheet */
         @media (max-width: 768px) {
@@ -211,8 +212,7 @@
             const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
 
             try {
-                // Backend API parameters bhej rahe hain query string me query parameters ke saath
-                const response = await fetch(`${API_BASE_URL}/history?month=${selectedMonth}`);
+                const response = await fetch(`${API_BASE_URL}/api/history?month=${selectedMonth}`);
                 if (!response.ok) throw new Error("History fetch failed");
 
                 const archiveData = await response.json();

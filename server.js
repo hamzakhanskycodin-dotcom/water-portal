@@ -107,3 +107,8 @@ app.delete('/api/customers/delete/:id', async (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Example Node.js/Express Backend Route
+app.get('/api/history', (req, res) => {
+    const { month } = req.query; // Yeh '2026-09' receive karega
+    // Database se us mahine ka data fetch karne ka code...
+});
