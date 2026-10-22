@@ -26,23 +26,24 @@ const logSchema = new mongoose.Schema({
   fuelExpense: { type: Number, default: 0 },
   otherPayments: { type: Number, default: 0 }
 });
-
+const MonthlyLog = mongoose.model('MonthlyLog', logSchema);
 // --- 2. CUSTOMER MATRIX SCHEMA ---
 const CustomerSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  month: { type: String, required: true, default: () => new Date().toISOString().slice(0, 7) }, // Naya Field: Auto-sets current month "YYYY-MM"
+  month: { type: String, required: true, default: () => new Date().toISOString().slice(0, 7) }, // Format "YYYY-MM"
   days: { type: [Number], default: () => new Array(30).fill(0) }
 });
 const Customer = mongoose.model('Customer', CustomerSchema);
 
 
+
 // ==================== API ROUTES ====================
 
-// // Dashboard Routes (Line 41 - 70 ko is se replace karein)
 app.get('/api/logs', async (req, res) => {
   try {
-    const currentMonth = new Date().toISOString().slice(0, 7); // Auto targets current month "2026-10"
-    const logs = await mongoose.model('MonthlyLog').find({ month: currentMonth }).sort({ day: 1 });
+    const currentMonth = new Date().toISOString().slice(0, 7); // "2026-10"
+    // Direct MonthlyLog model use karein
+    const logs = await MonthlyLog.find({ month: currentMonth }).sort({ day: 1 });
     res.json(logs);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -52,13 +53,13 @@ app.get('/api/logs', async (req, res) => {
 app.post('/api/logs/update', async (req, res) => {
   try {
     const { day, field, value } = req.body;
-    const currentMonth = new Date().toISOString().slice(0, 7); // Ensure current month target
+    const currentMonth = new Date().toISOString().slice(0, 7);
 
     const updateData = {};
     updateData[field] = Number(value) || 0;
 
-    // Search and update using both month and day combined
-    const updatedLog = await mongoose.model('MonthlyLog').findOneAndUpdate(
+    // Direct MonthlyLog variable use karein
+    const updatedLog = await MonthlyLog.findOneAndUpdate(
       { month: currentMonth, day: Number(day) },
       { $set: updateData },
       { new: true, upsert: true }
@@ -70,6 +71,7 @@ app.post('/api/logs/update', async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 
