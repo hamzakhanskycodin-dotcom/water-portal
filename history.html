@@ -194,20 +194,6 @@
         const tbody = document.getElementById('matrixTableBody');
         const currentDayNum = new Date().getDate();
 
-
-        // // 2. Generate D1 to D30 Table Headers
-        // function generateTableHeaders() {
-        //     const headerRow = document.getElementById("headerRow");
-        //     const totalTh = headerRow.children[1];
-        //     for (let d = 1; d <= 30; d++) {
-        //         let th = document.createElement('th');
-        //         th.innerText = 'D' + d;
-        //         th.className = 'day-col text-center';
-        //         th.style.minWidth = '50px';
-        //         headerRow.insertBefore(th, totalTh);
-        //     }
-        // }
-
         // ✅ Line 219 se 239 tak is optimized function ko replace karein:
         async function loadHistoryData() {
             const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
@@ -296,37 +282,41 @@
 
 
 
-        // ✅ Line 335 se Line 347 tak ka purana code hata kar yeh perfect block lagayein:
-        function renderAnalytics(summary) {
-            // 🔴 Main Fix: grandTotal ki jagah aapke analytics section ki sahi ID (statWeeklyBottles) lagayi hai
-            const totalElem = document.getElementById('statWeeklyBottles') || document.getElementById('grandTotal');
-            if (totalElem) totalElem.innerText = (summary.totalSupply || 0).toLocaleString();
-
-            if (document.getElementById('statsSales')) {
-                document.getElementById('statsSales').innerText = "Rs. " + (summary.counterSale || 0).toLocaleString();
-            }
-            if (document.getElementById('statBorrow')) {
-                document.getElementById('statBorrow').innerText = (summary.borrowBottles || 0).toLocaleString();
-            }
-            if (document.getElementById('cardHamzaSupplier')) {
-                document.getElementById('cardHamzaSupplier').innerText = (summary.hamzaSupplier || 0).toLocaleString();
-            }
-            if (document.getElementById('cardArsalanBhai')) {
-                document.getElementById('cardArsalanBhai').innerText = (summary.arsalanBhai || 0).toLocaleString();
-            }
-            if (document.getElementById('cardMakkahPlant')) {
-                document.getElementById('cardMakkahPlant').innerText = (summary.makkahPlant || 0).toLocaleString();
-            }
-            if (document.getElementById('cardJuttPlant')) {
-                document.getElementById('cardJuttPlant').innerText = (summary.juttPlant || 0).toLocaleString();
-            }
-            if (document.getElementById('cardFuelExpense')) {
-                document.getElementById('cardFuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
-            }
-            if (document.getElementById('cardOtherPayments')) {
-                document.getElementById('cardOtherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
-            }
-        }
+       // ✅ Line 286 se 314 tak ka poora purana block hata kar yeh copy-paste karein:
+function renderAnalytics(summary) {
+    // 1. Total Supply Card
+    if (document.getElementById('grandTotal')) {
+        document.getElementById('grandTotal').innerText = (summary.totalSupply || 0).toLocaleString();
+    }
+    // 2. Total Counter Sales Card
+    if (document.getElementById('counterSales')) {
+        document.getElementById('counterSales').innerText = "Rs. " + (summary.counterSale || 0).toLocaleString();
+    }
+    // 3. Hamza Supplier Card
+    if (document.getElementById('hamzaSupplier')) {
+        document.getElementById('hamzaSupplier').innerText = (summary.hamzaSupplier || 0).toLocaleString();
+    }
+    // 4. Arsalan Bhai Card
+    if (document.getElementById('arsalanBhai')) {
+        document.getElementById('arsalanBhai').innerText = (summary.arsalanBhai || 0).toLocaleString();
+    }
+    // 5. Makkah Plant Card
+    if (document.getElementById('makkahPlant')) {
+        document.getElementById('makkahPlant').innerText = (summary.makkahPlant || 0).toLocaleString();
+    }
+    // 6. Jutt Plant Card
+    if (document.getElementById('juttPlant')) {
+        document.getElementById('juttPlant').innerText = (summary.juttPlant || 0).toLocaleString();
+    }
+    // 7. Fuel Exp Card
+    if (document.getElementById('fuelExpense')) {
+        document.getElementById('fuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
+    }
+    // 8. Other Exp Card
+    if (document.getElementById('otherPayments')) {
+        document.getElementById('otherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
+    }
+}
 
 
     </script>
