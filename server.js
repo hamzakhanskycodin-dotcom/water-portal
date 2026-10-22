@@ -15,7 +15,8 @@ mongoose.connect(mongoURI)
 
 // --- 1. DASHBOARD LOGS SCHEMA ---
 const LogSchema = new mongoose.Schema({
-    day: { type: Number, required: true, unique: true },
+    month: { type: String, required: true }, // Format: "YYYY-MM"
+    day: { type: Number, required: true },
     counterSale: { type: Number, default: 0 },
     hamzaSupplier: { type: Number, default: 0 },
     arsalanBhai: { type: Number, default: 0 },
@@ -26,6 +27,7 @@ const LogSchema = new mongoose.Schema({
     fuelExpense: { type: Number, default: 0 },
     otherPayments: { type: Number, default: 0 }
 });
+
 const Log = mongoose.model('MonthlyLog', LogSchema);
 
 // --- 2. CUSTOMER MATRIX SCHEMA ---
@@ -39,27 +41,39 @@ const Customer = mongoose.model('Customer', CustomerSchema);
 // ==================== API ROUTES ====================
 
 // Dashboard Routes
+// ==================== API ROUTES ====================
+
+// 1. Dashboard Routes - Logs Fetching with Month Filter (Line 41 se 46)
 app.get('/api/logs', async (req, res) => {
     try {
-        const logs = await Log.find().sort({ day: 1 });
+        const { month } = req.query; // Frontend se aane wala target month (e.g., '2026-11')
+        
+        let filter = {};
+        if (month) {
+            filter.month = month; // Agar month bheja hai to sirf usi month ka data nikalein
+        }
+
+        const logs = await Log.find(filter).sort({ day: 1 });
         res.json(logs);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
 
-// Apne app.post('/api/logs/update') ke andar is tarah complete update logic likhein:
+// 2. Log Update/Upsert with Month Mapping (Line 49 se 70)
 app.post('/api/logs/update', async (req, res) => {
     try {
-        const { day, field, value } = req.body;
+        const { month, day, field, value } = req.body;
 
-        // Dynamic query taake koi bhi field (samet totalSupply) force update ho jaye
+        // Dynamic update query taake jo field user ne badli hai wahi update ho
         const updateData = {};
         updateData[field] = Number(value) || 0;
 
-        // upsert: true se agar field ya document nahi bana hoga toh khud ban jayega
+        // 🔴 CRITICAL FIX: Ab database me month aur day dono check honge taake cross-talk na ho
         const updatedLog = await Log.findOneAndUpdate(
-            { day: Number(day) },
+            { month: month, day: Number(day) }, 
             { $set: updateData },
-            { new: true, upsert: true }
+            { new: true, upsert: true } // Agar is month/day ka entry nahi hai to automatic naya create hoga
         );
 
         res.status(200).json({ success: true, data: updatedLog });
@@ -68,6 +82,7 @@ app.post('/api/logs/update', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 // Customer Sheet Routes (Naye Added Routes)
