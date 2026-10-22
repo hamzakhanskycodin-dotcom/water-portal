@@ -331,20 +331,38 @@
 
 
 
-
+        // ✅ Line 335 se Line 347 tak ka purana code hata kar yeh perfect block lagayein:
         function renderAnalytics(summary) {
-            document.getElementById("grandTotal").innerText = summary.totalSupply || 0;
-            // countersale ko counterSale (S capital) kar diya
-            document.getElementById("counterSales").innerText = "Rs. " + (summary.counterSale || 0);
-            document.getElementById("hamzaSupplier").innerText = summary.hamzaSupplier || 0;
-            document.getElementById("arsalanBhai").innerText = summary.arsalanBhai || 0;
-            document.getElementById("makkahPlant").innerText = summary.makkahPlant || 0;
-            document.getElementById("juttPlant").innerText = summary.juttPlant || 0;
-            document.getElementById("fuelExpense").innerText = "Rs. " + (summary.fuelExpense || 0);
-            document.getElementById("otherPayments").innerText = "Rs. " + (summary.otherPayments || 0);
-            document.getElementById('cardFuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
-            document.getElementById('cardOtherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
-        } 
+            // 🔴 Main Fix: grandTotal ki jagah aapke analytics section ki sahi ID (statWeeklyBottles) lagayi hai
+            const totalElem = document.getElementById('statWeeklyBottles') || document.getElementById('grandTotal');
+            if (totalElem) totalElem.innerText = (summary.totalSupply || 0).toLocaleString();
+
+            if (document.getElementById('statsSales')) {
+                document.getElementById('statsSales').innerText = "Rs. " + (summary.counterSale || 0).toLocaleString();
+            }
+            if (document.getElementById('statBorrow')) {
+                document.getElementById('statBorrow').innerText = (summary.borrowBottles || 0).toLocaleString();
+            }
+            if (document.getElementById('cardHamzaSupplier')) {
+                document.getElementById('cardHamzaSupplier').innerText = (summary.hamzaSupplier || 0).toLocaleString();
+            }
+            if (document.getElementById('cardArsalanBhai')) {
+                document.getElementById('cardArsalanBhai').innerText = (summary.arsalanBhai || 0).toLocaleString();
+            }
+            if (document.getElementById('cardMakkahPlant')) {
+                document.getElementById('cardMakkahPlant').innerText = (summary.makkahPlant || 0).toLocaleString();
+            }
+            if (document.getElementById('cardJuttPlant')) {
+                document.getElementById('cardJuttPlant').innerText = (summary.juttPlant || 0).toLocaleString();
+            }
+            if (document.getElementById('cardFuelExpense')) {
+                document.getElementById('cardFuelExpense').innerText = "Rs. " + (summary.fuelExpense || 0).toLocaleString();
+            }
+            if (document.getElementById('cardOtherPayments')) {
+                document.getElementById('cardOtherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
+            }
+        }
+
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
