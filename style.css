@@ -76,100 +76,126 @@
      border-radius: 5px;
  }
 
-@media (max-width: 576px) {
-    /* 📌 1. Top Navigation Bar Core Alignment */
-    .navbar {
-        padding: 6px 4px !important;
-        height: auto !important;
-    }
-    .navbar-brand {
-        font-size: 13px !important;
-        white-space: normal !important;
-        text-align: left !important;
-        line-height: 1.2 !important;
-        max-width: 55% !important;
-    }
-    .welcome {
-        font-size: 11px !important;
-        font-weight: bold !important;
-    }
-    .navbar .container, 
-    .navbar .container-fluid {
-        display: flex !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        flex-wrap: nowrap !important;
-        padding-left: 2px !important;
-        padding-right: 2px !important;
-    }
+ @media (max-width: 576px) {
 
-    /* 📌 2. Main Control Grid Row Framework */
-    .row {
-        display: flex !important;
-        flex-wrap: wrap !important;
-        margin-left: -4px !important;
-        margin-right: -4px !important;
-    }
+     /* 📌 1. Top Navigation Bar Configuration */
+     .navbar {
+         padding: 8px 4px !important;
+         height: auto !important;
+     }
 
-    /* 📌 3. Analytics Progress Cards Perfect Scaling (300px-500px compatible) */
-    .card {
-        padding: 8px 6px !important;
-        margin-bottom: 6px !important;
-        min-height: 75px !important; /* Cards ki forced auto height scaling */
-        display: flex !important;
-        flex-direction: column !important;
-        justify-content: space-between !important;
-        align-items: center !important;
-        border-radius: 6px !important;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
-    }
-    .card h6 {
-        font-size: 10px !important; /* Text wrapping issues ka pakka ilaj */
-        line-height: 1.1 !important;
-        margin-bottom: 2px !important;
-        text-align: center !important;
-        width: 100% !important;
-        word-wrap: break-word !important;
-    }
-    .card h2, .card p, .card div {
-        font-size: 14px !important; /* Numeric figures readable and safe */
-        font-weight: bold !important;
-        margin: 0 !important;
-    }
+     .navbar-brand {
+         font-size: 13px !important;
+         white-space: normal !important;
+         text-align: left !important;
+         line-height: 1.2 !important;
+         max-width: 50% !important;
+     }
 
-    /* 📌 4. Column Sizes Management for Mobile Matrix View */
-    .col-6 {
-        flex: 0 0 50% !important;
-        max-width: 50% !important;
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-    }
+     .welcome {
+         font-size: 11px !important;
+         font-weight: bold !important;
+     }
 
-    /* 🔴 Total Supply (Grand Total) Ka Pehla Card Poori Width (100%) Par Aaye */
-    .row > div:first-child.col-6,
-    .col-12-mobile {
-        flex: 0 0 100% !important;
-        max-width: 100% !important;
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-        margin-bottom: 4px !important;
-    }
-    
-    /* Grand total card ke andar ka text sizing visual enhancement */
-    .row > div:first-child.col-6 .card h2 {
-        font-size: 18px !important;
-    }
+     .navbar .container,
+     .navbar .container-fluid {
+         display: flex !important;
+         justify-content: space-between !important;
+         align-items: center !important;
+         flex-wrap: nowrap !important;
+         padding-left: 4px !important;
+         padding-right: 4px !important;
+     }
 
-    /* 📌 5. Buttons Styling Controls */
-    .btn {
-        padding: 4px 8px !important;
-        font-size: 12px !important;
-    }
-    .btn-danger {
-        padding: 2px 6px !important;
-        font-size: 11px !important;
-    }
-}
+     /* 📌 2. Main Row Layout Reset */
+     .row {
+         display: flex !important;
+         flex-wrap: wrap !important;
+         margin-left: -4px !important;
+         margin-right: -4px !important;
+     }
+
+     /* 📌 3. Cards Grid Handling (Forcing 2 columns for all cards except the first one) */
+     .row>div,
+     .col-6 {
+         flex: 0 0 50% !important;
+         max-width: 50% !important;
+         padding-left: 4px !important;
+         padding-right: 4px !important;
+         box-sizing: border-box !important;
+     }
+
+     /* 🔴 Sabse Pehla Card (Total Supply / Grand Total) Hamesha 100% Full Width Le */
+     .row>div:first-child {
+         flex: 0 0 100% !important;
+         max-width: 100% !important;
+         margin-bottom: 4px !important;
+     }
+
+     /* 📌 4. Card Box Internal Designing & Text Scaling */
+     .card {
+         padding: 10px 6px !important;
+         margin-bottom: 8px !important;
+         min-height: 80px !important;
+         /* Ek jaisi unchai */
+         display: flex !important;
+         flex-direction: column !important;
+         justify-content: center !important;
+         align-items: center !important;
+         border-radius: 6px !important;
+         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06) !important;
+         text-align: center !important;
+         box-sizing: border-box !important;
+     }
+
+     /* Card ki Headings (Text Labels) */
+     .card h6 {
+         font-size: 10px !important;
+         line-height: 1.2 !important;
+         margin-top: 0 !important;
+         margin-bottom: 4px !important;
+         width: 100% !important;
+         word-wrap: break-word !important;
+         white-space: normal !important;
+         opacity: 0.9 !important;
+     }
+
+     /* Card ke andar aane wale Numbers (e.g., Rs. 111 ya 1,111) */
+     .card h2,
+     .card p,
+     .card div,
+     .card span {
+         font-size: 15px !important;
+         font-weight: bold !important;
+         margin: 0 !important;
+         line-height: 1 !important;
+     }
+
+     /* Pehle full-width card ke andar number thoda bada aur prominent dikhe */
+     .row>div:first-child .card h2,
+     .row>div:first-child .card p {
+         font-size: 20px !important;
+     }
+
+     /* 📌 5. Table Responsive Layout Configuration */
+     .table-responsive {
+         overflow-x: auto !important;
+         max-width: 100% !important;
+         margin-top: 15px !important;
+         scrollbar-width: thin !important;
+     }
+
+     .table-responsive table {
+         min-width: 750px !important;
+         /* Taki horizontal scroll base par grid tight na ho */
+     }
+
+     /* 📌 6. General Buttons Setup */
+     .btn {
+         padding: 5px 10px !important;
+         font-size: 12px !important;
+     }
+ }
 
 
 
