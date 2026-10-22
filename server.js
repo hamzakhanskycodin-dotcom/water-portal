@@ -75,8 +75,9 @@ app.post('/api/logs/update', async (req, res) => {
 
 app.get('/api/customers', async (req, res) => {
   try {
-    const currentMonth = new Date().toISOString().slice(0, 7); // Auto targets current month "2026-10"
-    const customers = await mongoose.model('Customer').find({ month: currentMonth });
+    const currentMonth = new Date().toISOString().slice(0, 7); // Auto "2026-10"
+    // mongoose.model(...) ki jagah direct Customer variable use karein
+    const customers = await Customer.find({ month: currentMonth }); 
     res.json(customers);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -84,13 +85,13 @@ app.get('/api/customers', async (req, res) => {
 });
 
 
-// Line 80 se 88 tak ko is se replace karein
+
 app.post('/api/customers/add', async (req, res) => {
   try {
     const currentMonth = new Date().toISOString().slice(0, 7);
-    const newCustomer = new (mongoose.model('Customer'))({
+    const newCustomer = new Customer({
       name: req.body.name,
-      month: currentMonth, // Explicitly monthly binding
+      month: currentMonth,
       days: new Array(30).fill(0)
     });
     await newCustomer.save();
