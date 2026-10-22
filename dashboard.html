@@ -169,12 +169,16 @@
             loadDataFromMongoDB();
         }
 
-               // ✅ Line 173 se 182 tak ka hissa mita kar sirf itna rakhein:
-        document.addEventListener("DOMContentLoaded", () => {
-            buildMonthDropdown();
-            loadHistoryData(); // Yeh line bina kisi error ke data fetch chalayegi
-        });
+        // 2. Slider ke (<) aur (>) buttons ka logic
+        function navigateMonth(direction) {
+            currentTrackingDate.setMonth(currentTrackingDate.getMonth() + direction);
+            updateMonthDisplay();
+        }
 
+        // 3. Page load hote hi function chalane ke liye listener
+        document.addEventListener("DOMContentLoaded", () => {
+            updateMonthDisplay();
+        });
 
 
         // ✅ 1. Safe dynamic database data fetching logic (Merged & Cleaned)
