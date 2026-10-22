@@ -211,21 +211,18 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        // 💡 Yahan par aapko apna actual analytics/log data bhejna hai jo update hona hai
-                        // Example:
-                        counterSale: totalCounterSales,
-                        hamzaSupplier: totalHamzaSupplier,
-                        date: new Date().toISOString()
+                        day: Number(day),
+                        field: field,
+                        value: Number(value) || 0
                     })
                 });
 
-                const data = await response.json();
-                console.log("Update success:", data);
-
-            } catch (error) {
-                console.error("Error updating logs:", error);
+                if (!response.ok) {
+                    console.warn("Server side update failure status check.");
+                }
+            } catch (err) {
+                console.error("Cloud syncing failed, layout works locally:", err);
             }
-
         }
 
         function calculateTopAnalytics() {
