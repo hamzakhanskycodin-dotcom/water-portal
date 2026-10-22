@@ -41,48 +41,54 @@ const Customer = mongoose.model('Customer', CustomerSchema);
 
 // ==================== API ROUTES ====================
 
-// Dashboard Routes
-// ==================== API ROUTES ====================
+// ==================== FOOLPROOF API ROUTES ====================
 
-// 1. Dashboard Routes - Logs Fetching with Month Filter (Line 41 se 46)
+// 1. Logs Fetching Route (Safe Filter)
 app.get('/api/logs', async (req, res) => {
     try {
-        const { month } = req.query; // Frontend se aane wala target month (e.g., '2026-11')
+        const { month } = req.query; // Frontend filter string (e.g., '2026-09')
         
         let filter = {};
-        if (month) {
-            filter.month = month; // Agar month bheja hai to sirf usi month ka data nikalein
+        if (month && month !== "undefined" && month !== "null") {
+            filter.month = month; // Sirf tab filter lagayein jab month available ho
         }
 
+        // Database query execution
         const logs = await Log.find(filter).sort({ day: 1 });
-        res.json(logs);
+        res.status(200).json(logs);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("GET /api/logs crash log:", err);
+        res.status(500).json([]); // Frontend crash se bachane ke liye khali array bhejein
     }
 });
 
-// 2. Log Update/Upsert with Month Mapping (Line 49 se 70)
+// 2. Logs Upsert Route (Safe Auto-Creation)
 app.post('/api/logs/update', async (req, res) => {
     try {
         const { month, day, field, value } = req.body;
 
-        // Dynamic update query taake jo field user ne badli hai wahi update ho
+        // Validation check taake servers invalid fields par crash na hon
+        if (!month || !day || !field) {
+            return res.status(400).json({ success: false, error: "Missing parameters" });
+        }
+
         const updateData = {};
         updateData[field] = Number(value) || 0;
 
-        // 🔴 CRITICAL FIX: Ab database me month aur day dono check honge taake cross-talk na ho
+        // Find and update or insert if doesn't exist
         const updatedLog = await Log.findOneAndUpdate(
             { month: month, day: Number(day) }, 
             { $set: updateData },
-            { new: true, upsert: true } // Agar is month/day ka entry nahi hai to automatic naya create hoga
+            { new: true, upsert: true, runValidators: false } // runValidators false rakhne se strict validation crash nahi karegi
         );
 
         res.status(200).json({ success: true, data: updatedLog });
     } catch (err) {
-        console.error("Database update failed:", err);
+        console.error("POST /api/logs/update crash log:", err);
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
 
 
 
