@@ -141,10 +141,37 @@
                 <table class="table table-bordered matrix-table bg-white m-0">
                     <thead class="table-dark sticky-top">
                         <tr id="headerRow">
-                            <th style="min-width:180px; text-align: left;">Customer Name</th>
-                            <!-- Days D1 to D30 will populate here dynamically -->
-                            <th class="total-column-bg">TOTAL BOTTLES</th>
+                            <th class="bg-dark text-white text-center"
+                                style="min-width: 120px; vertical-align: middle;">DATE</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #198754; vertical-align: middle;">COUNTER
+                                SALE</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #1c3d73; vertical-align: middle;">HAMZA
+                                SUPPLIER</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #3fa2f6; vertical-align: middle;">ARSALAN
+                                BHAI</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #ff3344; vertical-align: middle;">MAKKAH
+                                PLANT</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #ffc107; color: black !important; vertical-align: middle;">
+                                JUTT PLANT</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #0d6efd; vertical-align: middle;">TOTAL
+                                SUPPLY</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #dc3545; vertical-align: middle;">BORROW
+                                BOTTLES</th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #6c757d; vertical-align: middle;">FUEL EXP.
+                            </th>
+                            <th class="text-white text-center fw-bold"
+                                style="min-width: 140px; background-color: #212529; vertical-align: middle;">OTHER EXP.
+                            </th>
                         </tr>
+
                     </thead>
                     <tbody id="matrixTableBody">
                         <!-- Customer rows will load here -->
@@ -326,26 +353,9 @@
 
             if (!tbody) return;
 
-            // Purana content aur structure reset karein
-            if (headerRow) headerRow.innerHTML = '';
-            tbody.innerHTML = '';
+            // ✅ Line 356 se Line 375 tak ka kachra saaf karke sirf itna rakhein:
+            if (tbody) tbody.innerHTML = '';
             if (tfoot) tfoot.innerHTML = '';
-
-            // ✅ Line 334 se 338 tak ka hissa mita kar sirf yeh exact columns paste karein:
-            let headerHtml = `
-            <th class="bg-dark text-white text-center" style="min-width: 120px;">DATE</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #198754;">COUNTER SALE</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #1c3d73;">HAMZA SUPPLIER</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #3fa2f6;">ARSALAN BHAI</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #ff3344;">MAKKAH PLANT</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #ffc107; color: black !important;">JUTT PLANT</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #0d6efd;">TOTAL SUPPLY</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #dc3545;">BORROW BOTTLES</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #6c757d;">FUEL EXP.</th>
-            <th class="text-white text-center" style="min-width: 140px; background-color: #212529;">OTHER EXP.</th>
-        `;
-
-            if (headerRow) headerRow.innerHTML = headerHtml;
 
             // 2. Empty check list validation
             if (!customers || customers.length === 0) {
