@@ -163,18 +163,13 @@
     <script>
 
         const API_BASE_URL = "/api";
-
-        // Authentication Guard
         if (!localStorage.getItem('loggedInUser')) {
             window.location.href = 'index.html';
         }
-
         function logout() {
             localStorage.removeItem('loggedInUser');
             window.location.href = 'index.html';
         }
-
-        // Page Load Setup
         document.addEventListener("DOMContentLoaded", () => {
             buildMonthDropdown();
             generateTableHeaders();
@@ -186,10 +181,7 @@
             if (headingElem) {
                 headingElem.innerText = formattedMonth;
             }
-
         });
-
-        // 1. Generate Dropdown for past 12 Months
         function buildMonthDropdown() {
             const select = document.getElementById("historyMonthSelect");
             const current = new Date();
