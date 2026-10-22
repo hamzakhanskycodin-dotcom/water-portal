@@ -53,24 +53,26 @@ app.get('/api/logs', async (req, res) => {
 app.post('/api/logs/update', async (req, res) => {
   try {
     const { day, field, value } = req.body;
-    const currentMonth = new Date().toISOString().slice(0, 7);
+    const currentMonth = new Date().toISOString().slice(0, 7); // Generates "2026-10"
 
+    // Dynamic field database mapping
     const updateData = {};
     updateData[field] = Number(value) || 0;
 
-    // Direct MonthlyLog variable use karein
+    // Strict validation mapping check
     const updatedLog = await MonthlyLog.findOneAndUpdate(
       { month: currentMonth, day: Number(day) },
       { $set: updateData },
-      { new: true, upsert: true }
+      { new: true, upsert: true, setDefaultsOnInsert: true }
     );
 
     res.status(200).json({ success: true, data: updatedLog });
   } catch (err) {
-    console.error("Database update failed:", err);
+    console.error("Database logs update failed:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 
 
