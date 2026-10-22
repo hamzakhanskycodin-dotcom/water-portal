@@ -320,53 +320,16 @@
          white-space: nowrap !important;
      }
 
-     .table-responsive table thead tr th:first-child,
-     #headerRow th:first-child,
-     .table-dark tr th:first-child,
-     .bg-light[style*="width: 100px"] {
-         /* Inline styles ko force override karne ke liye selector */
-         position: sticky !important;
-         left: 0 !important;
-         background: #212529 !important;
-         /* Pure Solid Uniform Black Color Background */
-         background-color: #212529 !important;
-         color: #ffffff !important;
-         opacity: 1 !important;
-         z-index: 9999 !important;
-         /* Table ke baqi saare elements se upar rahe */
-         width: 65px !important;
-         min-width: 65px !important;
-         max-width: 65px !important;
-         text-align: center !important;
-         vertical-align: middle !important;
-         box-shadow: 3px 0 5px rgba(0, 0, 0, 0.4) !important;
-     }
-
-     /* 🔴 Neeche Ki Rows (Day 1, Day 2...) Ke Cells Ko Safely White Background Par Opaque Rakhna */
-     .table-responsive table tbody tr td:first-child,
-     #matrixTableBody tr td:first-child {
-         position: sticky !important;
-         left: 0 !important;
-         background: #ffffff !important;
-         /* Solid background taake piche ka numbers data scroll me na jhaanke */
-         background-color: #ffffff !important;
-         color: #212529 !important;
-         font-weight: bold !important;
-         z-index: 999 !important;
-         width: 65px !important;
-         min-width: 65px !important;
-         max-width: 65px !important;
-         white-space: nowrap !important;
-         box-shadow: 3px 0 5px rgba(0, 0, 0, 0.15) !important;
-     }
-
-     /* Table body scroll layout fix context layout */
-     .table-responsive {
-         position: relative !important;
-         border-collapse: separate !important;
-     }
+     
+    /* 📌 2. Saari Main Headings ko black aur top par stick rakhna */
+    .table-responsive table thead tr th {
+        position: sticky !important;
+        top: 0 !important;
+        background-color: #212529 !important;
+        color: #ffffff !important;
+        z-index: 1000 !important;
+    }
  }
-
 
 
 
