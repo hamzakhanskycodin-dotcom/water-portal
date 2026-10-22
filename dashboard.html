@@ -18,8 +18,6 @@
                 <span class="welcome text-white me-5">Welcome, <b id="userLabel"></b></span>
             </div>
             <button onclick="logout()" class="btn btn-dange btn-sm fw-bold">Logout</button>
-            <a href="history.html" class="btn btn-warning fw-bold text-white">View Past History</a>
-
         </div>
     </nav>
 
@@ -30,7 +28,7 @@
                 30-Day Sheet</a>
         </div>
 
-        <h4 class="fw-bold mb-3 heading-2">Analytics & Progress Summary</h4>
+        <h4 class="fw-bold mb-3 heading-2" >Analytics & Progress Summary</h4>
 
         <!-- Row 1: Summary Cards -->
         <div class="row g-3 mb-4">
@@ -168,63 +166,55 @@
             }
         }
 
-       function renderTableStructure() {
-  let tableRowsHtml = '';
+        function renderTableStructure() {
+            let tableRowsHtml = '';
 
-  for (let day = 1; day <= 31; day++) {
-    const rowClass = (day === currentDayNum) ? 'class="current-day-row"' : '';
-    const dData = clientDataArray[day] || {};
+            for (let day = 1; day <= 31; day++) {
+                const rowClass = (day === currentDayNum) ? 'class="current-day-row"' : '';
+                const dData = clientDataArray[day];
 
-    tableRowsHtml += `<tr ${rowClass}>
-      <td><b>Day ${day}</b></td>
-      <td><input type="number" class="table-input text-success fw-bold" value="${dData.counterSale || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'counterSale', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.hamzaSupplier || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'hamzaSupplier', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
-      <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
-      <td><input type="number" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
-      <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
-      <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
-      <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" oninput="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
-    </tr>`;
-  }
-
-  tbody.innerHTML = tableRowsHtml;
-  calculateTopAnalytics();
-}
-
+                tableRowsHtml += `<tr ${rowClass}>
+                    <td><b>Day ${day}</b></td>
+                    <td><input type="number" class="table-input text-success fw-bold" value="${dData.counterSale || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'counterSale', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.hamzaSupplier || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'hamzaSupplier', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.arsalanBhai || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'arsalanBhai', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.makkahPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'makkahPlant', this.value)"></td>
+                    <td><input type="number" class="table-input" value="${dData.juttPlant || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'juttPlant', this.value)"></td>
+                    <td> <input type="number"id="row-total-supply-${day}" class="table-input text-primary fw-bold" value="${dData.totalSupply || ''}"placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'totalSupply', this.value)"></td>
+                    <td><input type="number" class="table-input text-danger fw-bold" value="${dData.borrowBottles || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'borrowBottles', this.value)"></td>
+                    <td><input type="number" class="table-input text-secondary" value="${dData.fuelExpense || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'fuelExpense', this.value)"></td>
+                    <td><input type="number" class="table-input text-dark" value="${dData.otherPayments || ''}" placeholder="0" onfocus="if(this.value=='0')this.value='';" onchange="sendUpdateToBackend(${day}, 'otherPayments', this.value)"></td>
+                </tr>`;
+            }
+            tbody.innerHTML = tableRowsHtml;
+            calculateTopAnalytics();
+        }
 
         async function sendUpdateToBackend(day, field, value) {
+            // Pehle local array update karein aur display chalayein (Taake card 0 na ho)
             if (!clientDataArray[day]) {
                 clientDataArray[day] = {};
             }
             clientDataArray[day][field] = Number(value) || 0;
 
-            // Realtime temporary update
+            // Live update card bina server dependence ke
             calculateTopAnalytics();
 
             try {
-                const API_BASE_URL = "/api";
                 const response = await fetch(`${API_BASE_URL}/logs/update`, {
+
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        day: Number(day),
-                        field: field,
-                        value: Number(value) || 0
-                    })
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ day, field, value })
                 });
 
                 if (!response.ok) {
-                    console.warn("Server side update failure status check.");
+                    console.warn("Server responded with an error, but local state is updated.");
                 }
             } catch (err) {
-                console.error("Cloud syncing failed, layout works locally:", err);
+                console.error("Cloud syncing failed, but local data works:", err);
             }
         }
-
         function calculateTopAnalytics() {
             let sums = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
             for (let day = 1; day <= 31; day++) {
