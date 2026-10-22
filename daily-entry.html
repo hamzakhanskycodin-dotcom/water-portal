@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Water Supply</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    </head>
+</head>
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
@@ -81,8 +81,8 @@
         </div>
     </div>
 
- <!-- 1. Firebase App Core Framework (Yeh zaroori hai) -->
-<script src="https://gstatic.com"></script>
+    <!-- 1. Firebase App Core Framework (Yeh zaroori hai) -->
+    <script src="https://gstatic.com"></script>
 
 
 
@@ -164,7 +164,7 @@
                     totalExpenses += currentExpenses;
                     totalBorrow += borrowBottles;
 
-                   
+
                 });
 
                 // DOM Updates
@@ -201,36 +201,72 @@
             const otherVal = document.getElementById('otherPayments').value;
 
             if (!dateVal) {
-                alert("Meharbani kar ke pehle Date select karein!");
+                alert("Meherbani kar ke pehle date select karein!");
                 return;
             }
 
-            const newEntry = {
+            // MongoDB format data block preparation
+            const entryData = {
                 date: dateVal,
                 counterSale: Number(salesVal) || 0,
                 labourPay: Number(labourVal) || 0,
                 totalSupply: Number(supplyVal) || 0,
                 borrowBottles: Number(borrowVal) || 0,
                 fuelExpense: Number(fuelVal) || 0,
-                otherPayments: Number(otherVal) || 0,
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                otherPayments: Number(otherval) || 0
             };
 
-            // Cloud Firestore mein entry add karna
-            db.collection("dailyEntries").add(newEntry).then(() => {
-                alert("Entry kamyabi se Cloud par save ho gayi hai!");
-                document.getElementById('loginForm').reset();
-                loadDailyEntries(); // Table dobara refresh karein
-            }).catch((error) => {
-                alert("Data save nahi ho saka: " + error);
-            });
+            try {
+                // Backend API par data bhejna Firebase ke bajaye
+                const response = await fetch('/api/logs/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(entryData)
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.success) {
+                    alert("Entry kamyabi se MongoDB me save ho gayi hai! 🎉");
+                    document.getElementById("loginForm").reset(); // Form clear krne ke liye
+                    loadDailyEntries(); // Table refresh krne ke liye
+                } else {
+                    alert("Data save nahi ho saka: " + result.error);
+                }
+            } catch (error) {
+                console.error("MongoDB transmission failure:", error);
+                alert("Server se rabta nahi ho saka!");
+            }
+        });
+
+        // 3. Table loading logic from MongoDB instead of Firestore
+        async function loadDailyEntries() {
+            try {
+                // Current month auto target calculations
+                const currentMonth = new Date().toISOString().slice(0, 7);
+                const response = await fetch(`/api/history?month=${currentMonth}`);
+                if (!response.ok) throw new Error("Fetch local updates failed");
+
+                const data = await response.json();
+
+                // Dynamic dashboard cards values automatically mapping
+                document.getElementById("statsales").innerText = "Rs. " + (data.summary.counterSale || 0);
+                document.getElementById("statexpenses").innerText = "Rs. " + ((data.summary.fuelExpense || 0) + (data.summary.otherPayments || 0));
+                document.getElementById("statweeklybottles").innerText = data.summary.totalSupply || 0;
+                document.getElementById("statborrow").innerText = data.summary.borrowBottles || 0;
+
+            } catch (err) {
+                console.error("Error updating UI components from MongoDB:", err);
+            }
         }
 
+        // Page loading triggers init
+        document.addEventListener("DOMContentLoaded", () => {
+            loadDailyEntries();
+        });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
 </body>
 
 </html>
