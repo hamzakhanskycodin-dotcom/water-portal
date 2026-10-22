@@ -215,6 +215,58 @@
          padding: 4px 6px !important;
          font-size: 11px !important;
      }
+
+     /* 📌 Multi-Device Table Grid Sticky Column Optimization */
+     .table-responsive table {
+         position: relative !important;
+         border-collapse: separate !important;
+         /* Fixed border-clipping bug during sticky scroll */
+         border-spacing: 0 !important;
+     }
+
+     /* 1. Matrix Table Headers Ka Pehla Cell (DATE) Sticky Setup */
+     .table-responsive table thead tr th:first-child {
+         position: sticky !important;
+         left: 0 !important;
+         background-color: #212529 !important;
+         /* Sync with theme black header */
+         color: white !important;
+         z-index: 99 !important;
+         width: 75px !important;
+         /* Date/Day column ki forced tight width scaling */
+         min-width: 75px !important;
+         max-width: 75px !important;
+         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2) !important;
+     }
+
+     /* 2. Matrix Table Body Ki Rows Ka Pehla Cell (Day 1, Day 2...) Sticky Setup */
+     .table-responsive table tbody tr td:first-child {
+         position: sticky !important;
+         left: 0 !important;
+         background-color: #ffffff !important;
+         /* White color background taake piche ka text hide ho sake */
+         color: #212529 !important;
+         font-weight: bold !important;
+         text-align: center !important;
+         z-index: 90 !important;
+         width: 75px !important;
+         /* Matching standard tight width dimensions */
+         min-width: 75px !important;
+         max-width: 75px !important;
+         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1) !important;
+     }
+
+     /* 3. Alternative Row background support taake dynamic text overlap colors contrast block na ho */
+     .table-responsive table tbody tr:nth-child(even) td:first-child {
+         background-color: #f8f9fa !important;
+         /* Alternate light gray for clean line split scanning */
+     }
+
+     /* Row Hover state tracking logic mapping overlay */
+     .table-responsive table tbody tr:hover td:first-child {
+         background-color: #f1f3f5 !important;
+     }
+
  }
 
 
