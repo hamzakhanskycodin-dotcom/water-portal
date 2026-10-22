@@ -93,20 +93,43 @@ app.post('/api/logs/update', async (req, res) => {
 
 
 // Customer Sheet Routes (Naye Added Routes)
+// 🔽 server.js me customers data fetch route ko badal kar yeh likhein:
 app.get('/api/customers', async (req, res) => {
     try {
-        const customers = await Customer.find();
-        res.json(customers);
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        const { month } = req.query; // Frontend se aane wala query month (e.g., '2026-09')
+        
+        let query = {};
+        if (month) {
+            query.month = month; // Sirf target month ka data filter karein
+        }
+
+        // Database se filter kiya hua data nikalna
+        const customers = await Customer.find(query); 
+        res.status(200).json(customers);
+    } catch (err) {
+        console.error("Error fetching filtered customers:", err);
+        res.status(500).json([]);
+    }
 });
+
 
 app.post('/api/customers/add', async (req, res) => {
     try {
-        const newCustomer = new Customer({ name: req.body.name, days: new Array(30).fill(0) });
+        const { name, month } = req.body; // Month parameter receive karna
+
+        const newCustomer = new Customer({
+            name,
+            month: month || new Date().toLocaleDateString('default', { month: 'long', year: 'numeric' }), 
+            days: {} // Blank 30 days grid array object
+        });
+
         await newCustomer.save();
-        res.json({ success: true, customer: newCustomer });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        res.status(201).json(newCustomer);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
 });
+
 
 app.post('/api/customers/update', async (req, res) => {
     const { id, dayIdx, value } = req.body;

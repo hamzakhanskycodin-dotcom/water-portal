@@ -161,7 +161,7 @@
          background-color: white;
          font-size: 13px;
      }
-
+     
  }
 
 
@@ -204,45 +204,4 @@
      background-color: #f8f9fa;
      font-weight: bold;
      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
- }
-
- /* Pehla Column (Customer Name) Sticky Config */
- #historyCustomerSheetTable th:first-child,
- #historyCustomerSheetTable td:first-child {
-     position: sticky !important;
-     left: 0 !important;
-     background-color: #212529 !important;
-     /* Header line color */
-     color: white !important;
-     z-index: 5;
-     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
- }
-
- #historyCustomerSheetTable td:first-child {
-     background-color: #f8f9fa !important;
-     /* Body cell background */
-     color: #0d6efd !important;
-     /* Bold primary color for names */
- }
-
- /* Aakhri Column (Daily Total) Sticky Config */
- #historyCustomerSheetTable th:last-child,
- #historyCustomerSheetTable td:last-child {
-     position: sticky !important;
-     right: 0 !important;
-     background-color: #212529 !important;
-     color: white !important;
-     z-index: 5;
-     box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
- }
-
- #historyCustomerSheetTable td:last-child {
-     background-color: #e9ecef !important;
-     /* Highlight background for totals */
-     color: #212529 !important;
- }
-
- /* Scroll smoothness handles */
- .table-responsive {
-     scrollbar-width: thin;
  }
