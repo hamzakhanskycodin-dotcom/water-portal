@@ -366,18 +366,7 @@
             tbody.innerHTML = tableRowsHtml;
         }
 
-        // 4. Footer Row Generation (Bottom Calculation Row for grand summaries)
-        if (tfoot) {
-            let footerHtml = `<tr><td class="fw-bold text-center bg-dark text-white">Daily Total:</td>`;
-            for (let day = 1; day <= 30; day++) {
-                const daySum = dailyTotalsArray[day];
-                grandTotalSum += daySum;
-                footerHtml += `<td class="text-center fw-bold font-monospace bg-secondary text-white">${daySum}</td>`;
-            }
-            footerHtml += `<td class="text-center fw-bold bg-success text-white fs-5">${grandTotalSum}</td></tr>`;
-            tfoot.innerHTML = footerHtml;
-        }
-        
+    
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
