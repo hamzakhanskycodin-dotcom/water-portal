@@ -154,17 +154,39 @@ app.post('/api/customers/add', async (req, res) => {
 });
 
 
+// ✅ server.js me customer updates save route ko badal kar yeh lagayein:
 app.post('/api/customers/update', async (req, res) => {
-    const { id, dayIdx, value } = req.body;
     try {
-        let customer = await Customer.findById(id);
-        if (!customer) return res.status(404).json({ error: "Customer not found" });
-        customer.days[dayIdx] = Number(value) || 0;
-        customer.markModified('days'); // Mongoose arrays ko live identify karne ke liye
-        await customer.save();
-        res.json({ success: true, customer });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+        const { id, dayIdx, value } = req.body;
+
+        // Form validations triggers check
+        if (!id || !dayIdx) {
+            return res.status(400).json({ success: false, error: "Missing customer id or day index" });
+        }
+
+        const numVal = Number(value) || 0;
+
+        // Dynamic Query Path: Mongoose Map keys ko update karne ke liye text array formats rule link
+        const updatePath = `days.${dayIdx}`;
+
+        // Find standard document and update the nested map property directly
+        const updatedCustomer = await Customer.findByIdAndUpdate(
+            id,
+            { \$set: { [updatePath]: numVal } },
+            { new: true, upsert: false } // Custom properties match
+        );
+
+        if (!updatedCustomer) {
+            return res.status(404).json({ success: false, error: "Customer document not found" });
+        }
+
+        res.status(200).json({ success: true, data: updatedCustomer });
+    } catch (err) {
+        console.error("Database customer sync write broke:", err);
+        res.status(500).json({ success: false, error: err.message });
+    }
 });
+
 
 app.delete('/api/customers/delete/:id', async (req, res) => {
     try {
