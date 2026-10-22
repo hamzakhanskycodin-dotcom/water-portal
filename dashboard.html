@@ -150,9 +150,26 @@
         </div>
     </div>
     <script>
-        // 1. Global Date State Setup (Taki pata rahe user kis month par khada hai)
+        let clientDataArray = {};
         let currentTrackingDate = new Date();
 
+        function updateMonthDisplay() {
+            const options = { month: 'long', year: 'numeric' };
+            const formattedMonth = currentTrackingDate.toLocaleDateString('default', options);
+
+            const headingElem = document.getElementById("currentLiveMonthHeading");
+            if (headingElem) {
+                headingElem.innerText = formattedMonth;
+            }
+            loadDataFromMongoDB(); // Slider dabne par data load function ko dobara chalayega
+        }
+
+        function navigateMonth(direction) {
+            currentTrackingDate.setMonth(currentTrackingDate.getMonth() + direction);
+            updateMonthDisplay();
+        }
+
+        // 1. Global Date State Setup (Taki pata rahe user kis month par khada hai)
         // 2. DOMContentLoaded listener ke andar ka code update karein
         document.addEventListener("DOMContentLoaded", () => {
             // Page load hote hi current system month ka data display aur fetch karein
@@ -252,25 +269,24 @@
 
         const tbody = document.getElementById('matrixTableBody');
         const currentDayNum = new Date().getDate();
-        let clientDataArray = {};
+
+
 
         // Empty structure initialize karein
         for (let d = 1; d <= 31; d++) {
             clientDataArray[d] = { counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0, juttPlant: 0, totalSupply: 0, borrowBottles: 0, fuelExpense: 0, otherPayments: 0 };
         }
-        // ✅ Sahi, saaf aur filtered load data function (Line 261 se 300 ki jagah isko lagayein)
         async function loadDataFromMongoDB() {
             try {
-                // Current tracking date se saal aur mahina nikalna (Jaise: 2026-11)
                 const year = currentTrackingDate.getFullYear();
                 const monthStr = String(currentTrackingDate.getMonth() + 1).padStart(2, '0');
                 const targetMonth = `${year}-${monthStr}`;
 
-                // 🔴 Backend ko query parameter ke sath batana ki is month ka data chahiye
+                // Dynamic URL fetch request target month filter ke sath
                 const response = await fetch(`${API_BASE_URL}/logs?month=${targetMonth}`);
                 let mongoData = await response.json();
 
-                // Naye mahine par jaane se pehle local memory array ko bilkul safe 0 (blank) set karna
+                // 🚨 IMPORTANT: Naye mahine par data blank (0) karne ke liye pehle memory array saaf karein
                 for (let d = 1; d <= 31; d++) {
                     clientDataArray[d] = {
                         counterSale: 0, hamzaSupplier: 0, arsalanBhai: 0, makkahPlant: 0,
@@ -279,18 +295,17 @@
                 }
 
                 if (!Array.isArray(mongoData)) {
-                    console.warn("Backend didn't return an array:", mongoData);
                     mongoData = [];
                 }
 
-                // Database se mila hua data map karna
+                // Database se mila hua data cells me map karna
                 mongoData.forEach(item => {
                     if (item && item.day && clientDataArray[item.day]) {
                         clientDataArray[item.day] = item;
                     }
                 });
 
-                // Table grid structure render karna
+                // Grid ui render update trigger
                 renderTableStructure();
 
             } catch (err) {
