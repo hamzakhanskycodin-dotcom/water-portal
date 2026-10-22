@@ -13,9 +13,9 @@ mongoose.connect(mongoURI)
     .then(() => console.log("MongoDB Connected Successfully!"))
     .catch(err => console.error("Database connection error:", err));
 
-// --- 1. DASHBOARD LOGS SCHEMA ---
+// 🔽 Apne server.js ke Schema wale hisse ko badal kar yeh likhein:
 const LogSchema = new mongoose.Schema({
-    month: { type: String, required: true }, // Format: "YYYY-MM"
+    month: { type: String, required: true }, // 👈 Yeh line lagana zaroori hai (Format: "YYYY-MM")
     day: { type: Number, required: true },
     counterSale: { type: Number, default: 0 },
     hamzaSupplier: { type: Number, default: 0 },
@@ -28,7 +28,8 @@ const LogSchema = new mongoose.Schema({
     otherPayments: { type: Number, default: 0 }
 });
 
-const Log = mongoose.model('MonthlyLog', LogSchema);
+// Model registeration line (agar pehle se bani hai to wahi rehne dein)
+const Log = mongoose.models.Log || mongoose.model('Log', LogSchema);
 
 // --- 2. CUSTOMER MATRIX SCHEMA ---
 const CustomerSchema = new mongoose.Schema({
