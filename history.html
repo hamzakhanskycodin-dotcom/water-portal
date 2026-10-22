@@ -318,73 +318,66 @@
         }
 
 
-        
         function renderHistoryMatrix(customers) {
-            const headerRow = document.getElementById("historyCustomerHeaderRow") || document.querySelector("#historyCustomerTable thead tr");
+            // HTML Elements ki sahi selectors mapping
+            const headerRow = document.getElementById("headerRow") || document.querySelector("#historyCustomerTable thead tr") || document.querySelector(".table-dark tr");
             const tbody = document.getElementById("matrixTableBody");
             const tfoot = document.getElementById("matrixFooter");
 
             if (!tbody) return;
 
-            // Purana saara design reset/clear karein
+            // Purana content aur structure reset karein
             if (headerRow) headerRow.innerHTML = '';
             tbody.innerHTML = '';
             if (tfoot) tfoot.innerHTML = '';
 
-            // 1. Empty state check
+            // 1. Headers generate karein (DATE | D1 se D30)
+            let headerHtml = `<th class="bg-dark text-white text-center" style="min-width: 180px;">Customer Name</th>`;
+            for (let d = 1; d <= 30; d++) {
+                headerHtml += `<th class="text-center bg-dark text-white" style="min-width: 60px;">D${d}</th>`;
+            }
+            if (headerRow) headerRow.innerHTML = headerHtml;
+
+            // 2. Empty check list validation
             if (!customers || customers.length === 0) {
-                if (headerRow) headerRow.innerHTML = `<th>Days / Customers</th><th>No Customers Found</th>`;
-                tbody.innerHTML = `<tr><td colspan="32" class="text-center text-muted py-4">No records found for this archived month.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="31" class="text-center text-muted py-4">No customer logs archived found for this month.</td></tr>`;
                 return;
             }
 
-            // 2. Table Headers Setup (DATE | Customer 1 | Customer 2 | ... | Daily Total)
-            let headerHtml = `<th style="min-width: 120px;" class="bg-dark text-white text-center">DATE</th>`;
-            customers.forEach(cust => {
-                headerHtml += `<th class="text-center bg-primary text-white" style="min-width: 130px;">${cust.name || 'Unnamed'}</th>`;
-            });
-            headerHtml += `<th style="min-width: 120px;" class="bg-dark text-white text-center">DAILY TOTAL</th>`;
-            if (headerRow) headerRow.innerHTML = headerHtml;
-
-            // Daily totals tracking array aur Grand Total variable initialized
-            let dailyTotalsArray = Array(32).fill(0);
-            let grandTotalSum = 0;
-
-            // 3. Day 1 se Day 30 tak ki Rows matrix generate karein
+            // 3. Customers ki horizontal rows generate karein
             let tableRowsHtml = '';
-            for (let day = 1; day <= 30; day++) {
-                tableRowsHtml += `<tr><td class="fw-bold text-center bg-light">Day ${day}</td>`;
-                let dayRowTotal = 0;
+            customers.forEach(cust => {
+                tableRowsHtml += `<tr>
+            <td class="fw-bold text-primary bg-light" style="position: sticky; left: 0; z-index: 1;">${cust.name || 'Unnamed Customer'}</td>`;
 
-                customers.forEach(cust => {
-                    // Safe key value lookup
-                    const datalog = cust.monthlyLogs || {};
-                    const val = (datalog[day] && datalog[day].totalSupply) ? Number(datalog[day].totalSupply) : 0;
+                // Day 1 se Day 30 tak loop se horizontal entries fill karein
+                for (let d = 1; d <= 30; d++) {
+                    // Aapke schema structure ke mutabiq object query path check
+                    const datalog = cust.monthlyLogs || cust.days || {};
+                    const val = (datalog[d] && datalog[d].totalSupply) ? datalog[d].totalSupply : (datalog[d] || 0);
 
-                    dayRowTotal += val;
-                    dailyTotalsArray[day] += val;
-
-                    const cellClass = val > 0 ? 'text-success fw-bold' : 'text-muted';
-                    tableRowsHtml += `<td class="text-center font-monospace ${cellClass}">${val}</td>`;
-                });
-
-                // Row ke aakhir me pure din ka total box column display
-                tableRowsHtml += `<td class="text-center fw-bold bg-light text-dark">${dayRowTotal}</td></tr>`;
-            }
-            tbody.innerHTML = tableRowsHtml;
-
-            // 4. Footer Row Generation (Bottom Calculation Row for grand summaries)
-            if (tfoot) {
-                let footerHtml = `<tr><td class="fw-bold text-center bg-dark text-white">Daily Total:</td>`;
-                for (let day = 1; day <= 30; day++) {
-                    const daySum = dailyTotalsArray[day];
-                    grandTotalSum += daySum;
-                    footerHtml += `<td class="text-center fw-bold font-monospace bg-secondary text-white">${daySum}</td>`;
+                    const cellClass = val > 0 ? 'text-success fw-bold text-center' : 'text-center text-muted';
+                    tableRowsHtml += `<td class="${cellClass}">${val}</td>`;
                 }
-                footerHtml += `<td class="text-center fw-bold bg-success text-white fs-5">${grandTotalSum}</td></tr>`;
-                tfoot.innerHTML = footerHtml;
-            }
+
+                tableRowsHtml += `</tr>`;
+            });
+
+            tbody.innerHTML = tableRowsHtml;
         }
+
+        // 4. Footer Row Generation (Bottom Calculation Row for grand summaries)
+        if (tfoot) {
+            let footerHtml = `<tr><td class="fw-bold text-center bg-dark text-white">Daily Total:</td>`;
+            for (let day = 1; day <= 30; day++) {
+                const daySum = dailyTotalsArray[day];
+                grandTotalSum += daySum;
+                footerHtml += `<td class="text-center fw-bold font-monospace bg-secondary text-white">${daySum}</td>`;
+            }
+            footerHtml += `<td class="text-center fw-bold bg-success text-white fs-5">${grandTotalSum}</td></tr>`;
+            tfoot.innerHTML = footerHtml;
+        }
+        
 
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
