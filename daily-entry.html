@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - Water Supply</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-</head>
+    </head>
 
 <body class="bg-light">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
@@ -81,13 +81,34 @@
         </div>
     </div>
 
+ <!-- 1. Firebase App Core Framework (Yeh zaroori hai) -->
+<script src="https://gstatic.com"></script>
+
+
+
+
     <script>
+        // 1. Aap ka Real Firebase Configuration Data
+        const firebaseConfig = {
+            apiKey: "AIzaSyC9FFDwNAnpt7rPUBtPxC37ufW0so55rrE",
+            authDomain: "://firebaseapp.com",
+            projectId: "water-supply-portal",
+            storageBucket: "water-supply-portal.firebasestorage.app",
+            messagingSenderId: "857218741697",
+            appId: "1:857218741697:web:66810837ffb22499372b40",
+            measurementId: "G-T8JQPR943V"
+        };
+
+        // Firebase ko initialize karein
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // 2. User Authentication Check
         const activeUser = localStorage.getItem('loggedInUser');
         if (!activeUser) {
             window.location.href = 'index.html';
         } else {
-            const userLabel = document.getElementById('userLabel');
-            if (userLabel) userLabel.innerText = activeUser;
+            document.getElementById('userLabel').innerText = activeUser;
         }
 
         function logout() {
@@ -95,64 +116,121 @@
             window.location.href = 'index.html';
         }
 
-        function updateCards(sales, expenses, supply, borrow) {
-            const statSales = document.getElementById('statSales');
-            const statExpenses = document.getElementById('statExpenses');
-            const statWeeklyBottles = document.getElementById('statWeeklyBottles');
-            const statBorrow = document.getElementById('statBorrow');
+        // 3. Firebase se Daily Entries load aur calculate karna
+        function loadDailyEntries() {
+            db.collection("dailyEntries").orderBy("date", "desc").get().then((querySnapshot) => {
+                let tableHtml = '';
+                let totalSales = 0;
+                let totalExpenses = 0;
+                let totalWeeklyBottles = 0;
+                let totalBorrow = 0;
+                let counter = 0;
 
-            if (statSales) statSales.innerText = 'Rs. ' + sales;
-            if (statExpenses) statExpenses.innerText = 'Rs. ' + expenses;
-            if (statWeeklyBottles) statWeeklyBottles.innerText = supply;
-            if (statBorrow) statBorrow.innerText = borrow;
-        }
-
-        async function loadDailyEntries() {
-            try {
-                const currentMonth = new Date().toISOString().slice(0, 7);
-                const response = await fetch(`/api/history?month=${currentMonth}`);
-                if (!response.ok) throw new Error('Fetch local updates failed');
-
-                const data = await response.json();
-                const entries = Array.isArray(data.entries) ? data.entries : [];
-                const summary = data.summary || {};
-                const tableBody = document.getElementById('historyTableBody');
-
-                if (!tableBody) return;
-
-                if (!entries.length) {
-                    tableBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Abhi tak koi data entry nahi ki gayi.</td></tr>';
+                if (querySnapshot.empty) {
+                    document.getElementById('historyTableBody').innerHTML = `<tr><td colspan="7" class="text-center text-muted">Abhi tak koi data entry nahi ki gayi.</td></tr>`;
                     updateCards(0, 0, 0, 0);
                     return;
                 }
 
-                tableBody.innerHTML = entries.map((entry) => `
-                    <tr>
-                        <td><b>${entry.date || ''}</b></td>
-                        <td class="text-success fw-bold">Rs. ${Number(entry.counterSale || 0)}</td>
-                        <td>Rs. ${Number(entry.labourPay || 0)}</td>
-                        <td class="fw-bold">${Number(entry.totalSupply || 0)}</td>
-                        <td class="text-danger">${Number(entry.borrowBottles || 0)}</td>
-                        <td>Rs. ${Number(entry.fuelExpense || 0)}</td>
-                        <td>Rs. ${Number(entry.otherPayments || 0)}</td>
-                    </tr>
-                `).join('');
+                querySnapshot.forEach((doc) => {
+                    const e = doc.data();
+                    counter++;
 
-                updateCards(
-                    Number(summary.counterSale || 0),
-                    Number((summary.fuelExpense || 0) + (summary.otherPayments || 0)),
-                    Number(summary.totalSupply || 0),
-                    Number(summary.borrowBottles || 0)
-                );
-            } catch (err) {
-                console.error('Error updating UI components from MongoDB:', err);
-            }
+                    // Purana bug fix: Number() use kar ke sahi calculation karna
+                    const counterSale = Number(e.counterSale || 0);
+                    const labourPay = Number(e.labourPay || 0);
+                    const fuelExpense = Number(e.fuelExpense || 0);
+                    const otherPayments = Number(e.otherPayments || 0);
+                    const totalSupply = Number(e.totalSupply || 0);
+                    const borrowBottles = Number(e.borrowBottles || 0);
+
+                    const currentExpenses = labourPay + fuelExpense + otherPayments;
+
+                    // Table ki row tayyar karna
+                    tableHtml += `
+                  <tr>
+                      <td><b>${e.date}</b></td>
+                      <td class="text-success fw-bold">Rs. ${counterSale}</td>
+                      <td>Rs. ${labourPay}</td>
+                      <td class="fw-bold">${totalSupply}</td>
+                      <td class="text-danger">${borrowBottles}</td>
+                      <td>Rs. ${fuelExpense}</td>
+                      <td>Rs. ${otherPayments}</td>
+                  </tr>
+              `;
+
+                    // Totals jama karna (Analytics ke liye)
+                    totalSales += counterSale;
+                    totalExpenses += currentExpenses;
+                    totalBorrow += borrowBottles;
+
+                   
+                });
+
+                // DOM Updates
+                document.getElementById('historyTableBody').innerHTML = tableHtml;
+                updateCards(totalSales, totalExpenses, totalWeeklyBottles, totalBorrow);
+
+            }).catch((error) => {
+                console.error("Data load karne mein masla: ", error);
+            });
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            loadDailyEntries();
-        });
+        // Cards ko screen par update karne ka function
+        function updateCards(sales, expenses, supply, borrow) {
+            if (document.getElementById('statSales')) document.getElementById('statSales').innerText = 'Rs. ' + sales;
+            if (document.getElementById('statExpenses')) document.getElementById('statExpenses').innerText = 'Rs. ' + expenses;
+            if (document.getElementById('statWeeklyBottles')) document.getElementById('statWeeklyBottles').innerText = supply;
+            if (document.getElementById('statBorrow')) document.getElementById('statBorrow').innerText = borrow;
+        }
+
+        // Page khulne par data load karein
+        loadDailyEntries();
+
+        // Jab user naya form submit kare to data seedha Firebase bhejein
+        function saveNewEntry(event) {
+            event.preventDefault(); // Page refresh hone se bachayein
+
+            // Form inputs se data lena
+            const dateVal = document.getElementById('entryDate').value;
+            const salesVal = document.getElementById('counterSale').value;
+            const labourVal = document.getElementById('labourPay').value;
+            const supplyVal = document.getElementById('totalSupply').value;
+            const borrowVal = document.getElementById('borrowBottles').value;
+            const fuelVal = document.getElementById('fuelExpense').value;
+            const otherVal = document.getElementById('otherPayments').value;
+
+            if (!dateVal) {
+                alert("Meharbani kar ke pehle Date select karein!");
+                return;
+            }
+
+            const newEntry = {
+                date: dateVal,
+                counterSale: Number(salesVal) || 0,
+                labourPay: Number(labourVal) || 0,
+                totalSupply: Number(supplyVal) || 0,
+                borrowBottles: Number(borrowVal) || 0,
+                fuelExpense: Number(fuelVal) || 0,
+                otherPayments: Number(otherVal) || 0,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+
+            // Cloud Firestore mein entry add karna
+            db.collection("dailyEntries").add(newEntry).then(() => {
+                alert("Entry kamyabi se Cloud par save ho gayi hai!");
+                document.getElementById('loginForm').reset();
+                loadDailyEntries(); // Table dobara refresh karein
+            }).catch((error) => {
+                alert("Data save nahi ho saka: " + error);
+            });
+        }
+
     </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
 </body>
 
 </html>
