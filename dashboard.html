@@ -32,7 +32,7 @@
                 30-Day Sheet</a>
         </div>
 
-        <h4 class="fw-bold mb-3 heading-2" >Analytics & Progress Summary</h4>
+        <h4 class="fw-bold mb-3 heading-2">Analytics & Progress Summary</h4>
 
         <!-- Row 1: Summary Cards -->
         <div class="row g-3 mb-4">
@@ -156,13 +156,17 @@
         async function loadDataFromMongoDB() {
             try {
                 const response = await fetch(`${API_BASE_URL}/logs`);
-                const mongoData = await response.json();
-
+                let mongoData = await response.json();
+                if (!Array.isArray(mongoData)) {
+                    console.warn("Backend didn't return an array:", mongoData);
+                    mongoData = [];
+                }
                 mongoData.forEach(item => {
-                    if (clientDataArray[item.day]) {
+                    if (item && item.day && clientDataArray[item.day]) {
                         clientDataArray[item.day] = item;
                     }
                 });
+
                 renderTableStructure();
             } catch (err) {
                 console.error("Cloud load failed, using local grid layout:", err);
