@@ -100,23 +100,26 @@
         <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart </h4>
         <!-- Dynamic Month Slider Navigation (Line 104 se 114 ki jagah lagayein) -->
         <div class="container mt-4">
-            <div class="d-flex justify-content-center align-items-center gap-4 mb-3">
+             <div class="d-flex justify-content-between align-items-center gap-2 month-slider-wrapper mb-3">
                 <!-- Previous Month Button -->
-                <button class="btn btn-outline-primary fw-bold px-3 shadow-sm" onclick="navigateMonth(-1)">
+                <button class="btn btn-outline-primary fw-bold slider-nav-btn shadow-sm" onclick="navigateMonth(-1)">
                     &lt; Prev
                 </button>
 
                 <!-- Dynamic Month Display Heading -->
-                <h2 class="text-center text-primary fw-bold m-0" style="min-width: 250px;">
+                <h2 class="text-center text-primary fw-bold m-0 slider-month-text">
                     <span id="currentLiveMonthHeading">-</span>
                 </h2>
 
                 <!-- Next Month Button -->
-                <button class="btn btn-outline-primary fw-bold px-3 shadow-sm" onclick="navigateMonth(1)">
+                <button class="btn btn-outline-primary fw-bold slider-nav-btn shadow-sm" onclick="navigateMonth(1)">
                     Next &gt;
                 </button>
             </div>
         </div>
+
+
+
 
 
         <div class="card p-3 shadow-sm border-0 mb-5">
