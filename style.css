@@ -76,93 +76,101 @@
      border-radius: 5px;
  }
 
- @media (max-width: 576px) {
+@media (max-width: 576px) {
+    /* 📌 1. Top Navigation Bar Core Alignment */
+    .navbar {
+        padding: 6px 4px !important;
+        height: auto !important;
+    }
+    .navbar-brand {
+        font-size: 13px !important;
+        white-space: normal !important;
+        text-align: left !important;
+        line-height: 1.2 !important;
+        max-width: 55% !important;
+    }
+    .welcome {
+        font-size: 11px !important;
+        font-weight: bold !important;
+    }
+    .navbar .container, 
+    .navbar .container-fluid {
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        padding-left: 2px !important;
+        padding-right: 2px !important;
+    }
 
-     .navbar {
-         padding: 8px 4px !important;
-         height: auto !important;
-         /* Fixed height khatam kar ke automatic fit karne ke liye */
-     }
+    /* 📌 2. Main Control Grid Row Framework */
+    .row {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        margin-left: -4px !important;
+        margin-right: -4px !important;
+    }
 
-     .navbar-brand {
-         font-size: 13px !important;
-         /* Text chota taake mobile screen se bahar na jaye */
-         white-space: normal !important;
-         /* Agar text bada ho toh automatic line change kare */
-         text-align: left;
-     }
+    /* 📌 3. Analytics Progress Cards Perfect Scaling (300px-500px compatible) */
+    .card {
+        padding: 8px 6px !important;
+        margin-bottom: 6px !important;
+        min-height: 75px !important; /* Cards ki forced auto height scaling */
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        border-radius: 6px !important;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05) !important;
+    }
+    .card h6 {
+        font-size: 10px !important; /* Text wrapping issues ka pakka ilaj */
+        line-height: 1.1 !important;
+        margin-bottom: 2px !important;
+        text-align: center !important;
+        width: 100% !important;
+        word-wrap: break-word !important;
+    }
+    .card h2, .card p, .card div {
+        font-size: 14px !important; /* Numeric figures readable and safe */
+        font-weight: bold !important;
+        margin: 0 !important;
+    }
 
-     .navbar .container,
-     .navbar .container-fluid {
-         display: flex !important;
-         justify-content: space-between !important;
-         align-items: center !important;
-         flex-wrap: nowrap !important;
-         /* Mobile par text aur logout ek hi line mein rahen */
-         max-width: 100% !important;
-         padding-left: 4px !important;
-         padding-right: 4px !important;
-     }
+    /* 📌 4. Column Sizes Management for Mobile Matrix View */
+    .col-6 {
+        flex: 0 0 50% !important;
+        max-width: 50% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+    }
 
-     .row {
-         display: flex !important;
-         flex-wrap: wrap !important;
-         margin-left: -4px !important;
-         margin-right: -4px !important;
-     }
+    /* 🔴 Total Supply (Grand Total) Ka Pehla Card Poori Width (100%) Par Aaye */
+    .row > div:first-child.col-6,
+    .col-12-mobile {
+        flex: 0 0 100% !important;
+        max-width: 100% !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
+        margin-bottom: 4px !important;
+    }
+    
+    /* Grand total card ke andar ka text sizing visual enhancement */
+    .row > div:first-child.col-6 .card h2 {
+        font-size: 18px !important;
+    }
 
-     /* Apne puraane mobile @media CSS ke andar .card ko is tarah update karein: */
-     .card {
-         padding: 10px 6px !important;
-         margin-bottom: 0px !important;
+    /* 📌 5. Buttons Styling Controls */
+    .btn {
+        padding: 4px 8px !important;
+        font-size: 12px !important;
+    }
+    .btn-danger {
+        padding: 2px 6px !important;
+        font-size: 11px !important;
+    }
+}
 
-         /* YEH 2 LINES ZAROOR ADD KAREIN: */
-         min-height: 85px !important;
-         /* Saare cards ko zabardasti ek jitni height milegi */
-         display: flex !important;
-         flex-direction: column !important;
-         justify-content: space-between !important;
-         /* Text aur Number barabar spread honge */
-     }
-
-     /* Iske sath hi h6 ka font thoda aur compressed karein taake wrap kam ho */
-     .card h6 {
-         font-size: 11px !important;
-         line-height: 1.2 !important;
-         margin-bottom: 2px !important;
-     }
-
-     /* Is code ko style.css ke @media block ke andar sabse upar add karein: */
-     .row.g-3 {
-         display: flex !important;
-         flex-wrap: wrap !important;
-     }
-
-     .col-6 {
-         flex: 0 0 50% !important;
-         max-width: 50% !important;
-         padding-left: 4px !important;
-         padding-right: 4px !important;
-     }
-
-     /* Total Supply (Grand Total) wale div/column par col-12 class ko 100% full-width rakhne ke liye */
-     .col-md-12 {
-         flex: 0 0 100% !important;
-         max-width: 100% !important;
-     }
-
-     .welcome {
-         font-size: 13px !important;
-         /* Mobile par welcome text chota ho jaye */
-     }
-
-     .btn-dange {
-         padding: 2px 0px !important;
-         background-color: white;
-         font-size: 13px;
-     }
-     
- }
 
 
  .matrix-input {
