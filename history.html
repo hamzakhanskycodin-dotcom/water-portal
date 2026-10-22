@@ -175,6 +175,14 @@
             buildMonthDropdown();
             generateTableHeaders();
             loadHistoryData();
+            // Yeh automatic current month aur year (Jaise: October 2026) heading me daal dega
+            const currentOptions = { month: 'long', year: 'numeric' };
+            const formattedMonth = new Date().toLocaleDateString('default', currentOptions);
+            const headingElem = document.getElementById("currentLiveMonthHeading");
+            if (headingElem) {
+                headingElem.innerText = formattedMonth;
+            }
+
         });
 
         // 1. Generate Dropdown for past 12 Months

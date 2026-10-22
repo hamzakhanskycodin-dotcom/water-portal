@@ -101,10 +101,10 @@
         </div>
 
         <h4 class="fw-bold mb-3 text-dark">🗓️ Monthly Log Chart (Auto-Saves to Cloud)</h4>
-        <!-- History dropdown ke bilkul niche ya Analytics Summary se upar lagayein -->
+        <!-- Live Month Heading -->
         <div class="container mt-4">
             <h2 class="text-center text-primary fw-bold mb-3">
-                Archived Data For: <span id="currentArchiveMonthHeading">-</span>
+                Live Tracking For: <span id="currentLiveMonthHeading">-</span>
             </h2>
         </div>
 
@@ -203,9 +203,6 @@
             }
             tbody.innerHTML = tableRowsHtml;
             calculateTopAnalytics();
-            // Apne loadHistoryData() function me jahan data successfully fetch hota hai wahan is tarah update karein:
-            const selectedMonthText = document.getElementById("historyMonthSelect").options[document.getElementById("historyMonthSelect").selectedIndex].text;
-            document.getElementById("currentArchiveMonthHeading").innerText = selectedMonthText;
 
         }
 
