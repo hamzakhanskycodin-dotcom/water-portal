@@ -190,10 +190,10 @@
             localStorage.removeItem('loggedInUser');
             window.location.href = 'index.html';
         }
-        // ✅ Line 173 se 183 tak ka poora block hata kar sirf yeh likhein:
+      
         document.addEventListener("DOMContentLoaded", () => {
             buildMonthDropdown();
-            loadHistoryData(); // Page load hote hi data fetch chalayega
+            loadHistoryData(); 
         });
 
         function buildMonthDropdown() {
@@ -214,7 +214,7 @@
         const tbody = document.getElementById('matrixTableBody');
         const currentDayNum = new Date().getDate();
 
-        // ✅ Line 219 se 239 tak is optimized function ko replace karein:
+        
         async function loadHistoryData() {
             const selectedMonth = document.getElementById("historyMonthSelect").value; // Format: YYYY-MM
 
@@ -272,7 +272,7 @@
             renderHistoryTableGrid(historyDaysArray);
         }
 
-        // ✅ Line 274 se 300 ki jagah yeh perfect layout code lagayein:
+       
         function renderHistoryTableGrid(daysData) {
             // Sahi HTML ID matrixTableBody ko target karna
             const targetBody = document.getElementById('matrixTableBody');
@@ -302,8 +302,6 @@
         }
 
 
-
-        // ✅ Line 286 se 314 tak ka poora purana block hata kar yeh copy-paste karein:
         function renderAnalytics(summary) {
             // 1. Total Supply Card
             if (document.getElementById('grandTotal')) {
@@ -338,6 +336,11 @@
                 document.getElementById('otherPayments').innerText = "Rs. " + (summary.otherPayments || 0).toLocaleString();
             }
         }
+
+
+
+
+
         function renderHistoryCustomerMatrix(customersList) {
             const headerRow = document.getElementById("historyCustomerHeaderRow");
             const tableBody = document.getElementById("historyCustomerTableBody");
