@@ -55,27 +55,31 @@ app.post('/api/logs/update', async (req, res) => {
     const { day, field, value } = req.body;
     const currentMonth = new Date().toISOString().slice(0, 7); // Generates "2026-10"
 
-    const updateData = {};
-    updateData[field] = Number(value) || 0;
+    // 1. Pehle database me us mahine aur din ka document dhoondhein
+    let log = await MonthlyLog.findOne({ month: currentMonth, day: Number(day) });
 
-    // Strict validation failure ko bypass karne ke liye optimize query
-    const updatedLog = await MonthlyLog.findOneAndUpdate(
-      { month: currentMonth, day: Number(day) },
-      { 
-        $set: updateData,
-        // Agar naya document insert ho raha ho to baqi standard columns auto-initialize ho jayein
-        $setOnInsert: { month: currentMonth, day: Number(day) } 
-      },
-      { new: true, upsert: true, runValidators: false } // runValidators false krne se schema strictly query block nahi rokega
-    );
+    // 2. Agar entry pehle se nahi bani hui to naya document create karein
+    if (!log) {
+      log = new MonthlyLog({
+        month: currentMonth,
+        day: Number(day)
+      });
+    }
 
-    console.log("Log saved successfully in DB:", updatedLog);
-    res.status(200).json({ success: true, data: updatedLog });
+    // 3. Dynamic target field ki value overwrite karein
+    log[field] = Number(value) || 0;
+
+    // 4. Mongoose save handle verification bypass ke sath commit karein
+    const savedLog = await log.save({ validateBeforeSave: false });
+
+    console.log("Log successfully pushed to MongoDB Atlas:", savedLog);
+    res.status(200).json({ success: true, data: savedLog });
   } catch (err) {
-    console.error("Database logs update failed:", err);
+    console.error("Critical core database log update failed:", err);
     res.status(500).json({ success: false, error: err.message });
   }
 });
+
 
 app.get('/api/customers', async (req, res) => {
   try {
