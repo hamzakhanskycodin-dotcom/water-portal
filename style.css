@@ -215,63 +215,6 @@
          padding: 4px 6px !important;
          font-size: 11px !important;
      }
-
-     /* 📌 Complete Multi-Device Matrix Framework Alignment */
-     .table-responsive table {
-         border-collapse: separate !important;
-         border-spacing: 0 !important;
-     }
-
-     /* 1. Upar ke standard row headings ke DATE cell ko custom priority overlap dena */
-     .table-responsive table thead tr th:first-child,
-     #headerRow th:first-child,
-     .table-dark tr th:first-child {
-         position: sticky !important;
-         left: 0 !important;
-         background-color: #212529 !important;
-         /* Pure uniform solid black color */
-         color: #ffffff !important;
-         z-index: 999 !important;
-         /* Sabse upar rahe */
-         width: 65px !important;
-         min-width: 65px !important;
-         max-width: 65px !important;
-         text-align: center !important;
-         vertical-align: middle !important;
-         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.3) !important;
-     }
-
-     /* 2. Vertically lines (Day 1, Day 2...) core freeze cells positioning setup */
-     .table-responsive table tbody tr td:first-child {
-         position: sticky !important;
-         left: 0 !important;
-         background-color: #ffffff !important;
-         /* Solid opaque layer fill */
-         color: #212529 !important;
-         font-weight: bold !important;
-         text-align: center !important;
-         vertical-align: middle !important;
-         z-index: 99 !important;
-         width: 65px !important;
-         min-width: 65px !important;
-         max-width: 65px !important;
-         font-size: 11px !important;
-         /* Mobile screens par compression issues ka complete solutions */
-         white-space: nowrap !important;
-         /* Text line single space parameters lock */
-         box-shadow: 2px 0 5px rgba(0, 0, 0, 0.15) !important;
-     }
-
-     /* 3. Horizontal elements borders parameters and grid lines mapping split colors layout */
-     .table-responsive table tbody tr:nth-child(even) td:first-child {
-         background-color: #f8f9fa !important;
-     }
-
-     /* Row elements tracker hover layer */
-     .table-responsive table tbody tr:hover td:first-child {
-         background-color: #e9ecef !important;
-     }
-
  }
 
 
