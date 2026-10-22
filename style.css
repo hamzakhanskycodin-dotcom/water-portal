@@ -127,8 +127,8 @@
 
      /* 🔴 Sabse Pehla Card (Total Supply / Grand Total) Hamesha 100% Full Width Le */
      .row>div:first-child {
-         flex: 0 0 100% ;
-         max-width: 100% ;
+         flex: 0 0 100%;
+         max-width: 100%;
          margin-bottom: 4px;
      }
 
@@ -195,7 +195,28 @@
          padding: 5px 10px !important;
          font-size: 12px !important;
      }
+
+     /* 📌 Mobile Breakpoint Alignment (300px - 500px viewport support) */
+
+     .month-slider-wrapper {
+         gap: 6px !important;
+         /* Mobile screens par spacing kam karein */
+     }
+
+     .slider-month-text {
+         font-size: 16px !important;
+         /* Month text (October 2026) screen me wrap hone se bachayein */
+         min-width: auto !important;
+     }
+
+     .slider-nav-btn {
+         min-width: 70px !important;
+         /* Buttons chote karein taake screen ke andar rahein */
+         padding: 4px 6px !important;
+         font-size: 11px !important;
+     }
  }
+
 
 
 
@@ -238,4 +259,20 @@
      background-color: #f8f9fa;
      font-weight: bold;
      box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+ }
+
+ /* 📌 Main Screen Slider Configuration */
+ .month-slider-wrapper {
+     width: 100% !important;
+     max-width: 500px !important;
+     margin: 0 auto !important;
+ }
+
+ .slider-month-text {
+     font-size: 24px !important;
+     flex-grow: 1 !important;
+ }
+
+ .slider-nav-btn {
+     min-width: 85px !important;
  }
